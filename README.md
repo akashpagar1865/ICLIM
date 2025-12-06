@@ -1,17 +1,11 @@
-Absolutely — here is a **clean, professional, recruiter-friendly README**, written in the style used by early-career cloud/DevOps engineers.
-It is concise, technical, and positioned as a real project, not a casual exercise.
 
-Copy → paste this directly into your `README.md`.
-
----
-
-# 🚀 ICLIM — Intelligent Cloud-Integrated Linux Monitor
+# ICLIM — Intelligent Cloud-Integrated Linux Monitor
 
 *A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
 
 ---
 
-## 📌 Overview
+## Overview
 
 ICLIM is a hands-on infrastructure learning project where I’m building a monitoring agent that collects system metrics, stores structured snapshots, and prepares data for cloud automation and AI-powered analysis.
 
@@ -21,7 +15,7 @@ This repo is updated iteratively as I progress through each milestone.
 
 ---
 
-## 🔧 Features (Current + Upcoming)
+## Features (Current + Upcoming)
 
 ### ✅ **Completed**
 
