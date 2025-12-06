@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# VS Code settings (optional, your choice)
+.vscode/
+
+# Logs and generated data (we don’t need them in repo)
+*.log
+*.txt
+*.json
+
+# Later we might keep an example JSON, but for now ignore all

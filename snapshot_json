@@ -1,0 +1,6 @@
+{
+  "cpu": 20,
+  "mem": 100,
+  "disk": 200,
+  "server": "Linux VM"
+}
