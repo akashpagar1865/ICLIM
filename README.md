@@ -26,14 +26,16 @@ This repo is updated iteratively as I progress through each milestone.
 * JSON-based data pipeline foundation
 * Timestamped metric collection
 * Loaded and analyzed historical snapshots using pandas
+* Added AI-based anomaly detection using IsolationForest (model saved as anomaly_model.pkl)
 
 ### 🚧 **In Progress**
 
-* AI-based anomaly detection (IsolationForest)
+* Real-time anomaly detection using live snapshots + AI model
+* Basic NLP for log classification
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* AI-based anomaly detection (IsolationForest)
+* Real-time anomaly detection using live snapshots + AI model
 * Basic NLP for log classification
 * Lightweight HTML dashboard
 * Packaging the agent for Linux (CentOS VM)
@@ -131,8 +133,8 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] JSON snapshot pipeline
 [✓] Live metric collector
 [✓] Timestamped data collection
-[✓ ] Historical dataset builder
-[ ] AI anomaly detector
+[✓] Historical dataset builder
+[✓] AI anomaly detector
 [ ] NLP log classifier
 [ ] HTML dashboard
 [ ] Linux deployment
