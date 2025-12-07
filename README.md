@@ -24,10 +24,10 @@ This repo is updated iteratively as I progress through each milestone.
 * Structured system snapshots
 * Live metric collection using `psutil` (CPU, memory, disk)
 * JSON-based data pipeline foundation
+* Timestamped metric collection
 
 ### 🚧 **In Progress**
 
-* Timestamped metric collection
 * Snapshot history file
 * Basic log handling
 * Folder structure for agent modules
@@ -132,7 +132,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] Python fundamentals
 [✓] JSON snapshot pipeline
 [✓] Live metric collector
-[ ] Timestamped data collection
+[✓] Timestamped data collection
 [ ] Historical dataset builder
 [ ] AI anomaly detector
 [ ] NLP log classifier
