@@ -25,17 +25,15 @@ This repo is updated iteratively as I progress through each milestone.
 * Live metric collection using `psutil` (CPU, memory, disk)
 * JSON-based data pipeline foundation
 * Timestamped metric collection
+* Loaded and analyzed historical snapshots using pandas
 
 ### 🚧 **In Progress**
 
-* Snapshot history file
-* Basic log handling
-* Folder structure for agent modules
+* AI-based anomaly detection (IsolationForest)
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Data analysis using `pandas`
-* AI-based anomaly detection
+* AI-based anomaly detection (IsolationForest)
 * Basic NLP for log classification
 * Lightweight HTML dashboard
 * Packaging the agent for Linux (CentOS VM)
@@ -133,7 +131,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] JSON snapshot pipeline
 [✓] Live metric collector
 [✓] Timestamped data collection
-[ ] Historical dataset builder
+[✓ ] Historical dataset builder
 [ ] AI anomaly detector
 [ ] NLP log classifier
 [ ] HTML dashboard
