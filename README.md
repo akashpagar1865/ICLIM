@@ -70,14 +70,14 @@ Cloud Integration  Azure VM (planned)
     │
     ├── live_snapshot_agent.py        # Basic real-time system metrics collector
     ├── snapshot_file_agent.py        # Creates & stores static snapshots
-    ├── lesson5_timestamp_agent.py    # Timestamped history builder
-    ├── lesson6_history_analysis.py   # pandas-based history analysis
-    ├── lesson7_anomaly_detection.py  # Initial model training on history
+    ├── agents/history_logger.py      # Timestamped history builder
+    ├── analysis/history_analysis.py  # pandas-based history analysis
+    ├── analysis/anomaly_training.py  # Initial model training on history
     ├── lesson8_realtime_anomaly.py   # Real-time AI anomaly detector
-    ├── retrain_anomaly_model.py      # Retrains IsolationForest model from history
+    ├── analysis/anomaly_retrain.py   # Retrains IsolationForest model from history
     │
-    ├── snapshot_history.jsonl        # Growing history of snapshots
-    ├── anomaly_model.pkl             # Saved IsolationForest model
+    ├── data/snapshot_history.jsonl   # Growing history of snapshots
+    ├── models/anomaly_model.pkl      # Saved IsolationForest model
     ├── anomaly_events.jsonl          # Logged anomaly events (if present)
     ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
     │
