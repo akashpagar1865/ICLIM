@@ -3,6 +3,18 @@
 
 *A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
 
+ICLIM: Intelligent Cloud/Linux Infrastructure Monitor
+
+           ┌────────────┐
+           │ Live Agent │── CPU/MEM/DISK snapshots ──┐
+           └────────────┘                             │
+                                                      ▼
+                                              snapshot_history.jsonl
+                                                      ▼
+           ┌──────────────────────┐           ┌──────────────────────┐
+           │ Anomaly Training     │──model──▶│ Realtime Anomaly Agent│
+           └──────────────────────┘           └──────────────────────┘
+
 ---
 
 ## Overview
@@ -15,7 +27,7 @@ This repo is updated iteratively as I progress through each milestone.
 
 ---
 
-## Features (Current + Upcoming)
+## Core Capabilities (Current + Upcoming)
 
 ### ✅ Completed
 
@@ -62,7 +74,7 @@ Cloud Integration  Azure VM (planned)
 
 ---
 
-## 📂 Project Structure
+## 📂 System Architecture
 
     ICLIM/
     │
@@ -86,7 +98,7 @@ Cloud Integration  Azure VM (planned)
 
 ---
 
-## ▶️ Running the Current Agent
+## ▶️ Running the Current Agent - Execution Flow
 
 Clone the repo and enter the project folder:
 
