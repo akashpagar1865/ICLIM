@@ -17,26 +17,29 @@ This repo is updated iteratively as I progress through each milestone.
 
 ## Features (Current + Upcoming)
 
-### ✅ **Completed**
+### ✅ Completed
 
-* Python fundamentals (functions, data structures, modules)
-* File handling (text + JSON)
-* Structured system snapshots
-* Live metric collection using `psutil` (CPU, memory, disk)
-* JSON-based data pipeline foundation
-* Timestamped metric collection
-* Loaded and analyzed historical snapshots using pandas
-* Added AI-based anomaly detection using IsolationForest (model saved as anomaly_model.pkl)
+  * Python fundamentals (functions, data structures, modules)
+  * File handling (text + JSON)
+  * Structured system snapshots
+  * Live metric collection using `psutil` (CPU, memory, disk)
+  * JSON-based data pipeline foundation
+  * Timestamped metric collection
+  * Loaded and analyzed historical snapshots using pandas
+  * AI-based anomaly detection using IsolationForest (model saved as `anomaly_model.pkl`)
+  * Real-time anomaly detection using the trained AI model
+  * Retraining pipeline that:
+    * uses recent snapshots from `snapshot_history.jsonl`
+    * safely skips invalid JSON lines
+    * can exclude known anomalies from training
+
 
 ### 🚧 **In Progress**
 
-* Real-time anomaly detection using live snapshots + AI model
 * Basic NLP for log classification
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Real-time anomaly detection using live snapshots + AI model
-* Basic NLP for log classification
 * Lightweight HTML dashboard
 * Packaging the agent for Linux (CentOS VM)
 * Deployment on Azure VM
@@ -46,31 +49,40 @@ This repo is updated iteratively as I progress through each milestone.
 
 ## 🛠 Tech Stack
 
-| Component            | Tools                |
-| -------------------- | -------------------- |
-| Language             | Python               |
-| Metrics              | psutil               |
-| Data Format          | JSON                 |
-| AI/ML (Upcoming)     | scikit-learn, TF-IDF |
-| Analysis (Upcoming)  | pandas               |
-| Dashboard (Upcoming) | HTML + charts        |
-| Cloud Integration    | Azure VM (planned)   |
+Component          Tools
+------------------ -------------------------------------
+Language           Python
+Metrics            psutil
+Data Format        JSON / JSONL
+AI/ML              scikit-learn (IsolationForest), future: TF-IDF
+Analysis           pandas
+Model Persistence  joblib
+Dashboard (Planned) HTML + charts
+Cloud Integration  Azure VM (planned)
 
 ---
 
 ## 📂 Project Structure
 
-```
-ICLIM/
-│
-├── Experiments/              # Learning scripts & practice exercises
-│
-├── live_snapshot_agent.py    # Collects real-time system metrics
-├── snapshot_file_agent.py    # Creates & stores static snapshots
-│
-├── README.md                 # Project documentation
-└── .gitignore                # Git exclusions (.venv, logs, etc.)
-```
+    ICLIM/
+    │
+    ├── Experiments/                  # Learning scripts & practice exercises
+    │
+    ├── live_snapshot_agent.py        # Basic real-time system metrics collector
+    ├── snapshot_file_agent.py        # Creates & stores static snapshots
+    ├── lesson5_timestamp_agent.py    # Timestamped history builder
+    ├── lesson6_history_analysis.py   # pandas-based history analysis
+    ├── lesson7_anomaly_detection.py  # Initial model training on history
+    ├── lesson8_realtime_anomaly.py   # Real-time AI anomaly detector
+    ├── retrain_anomaly_model.py      # Retrains IsolationForest model from history
+    │
+    ├── snapshot_history.jsonl        # Growing history of snapshots
+    ├── anomaly_model.pkl             # Saved IsolationForest model
+    ├── anomaly_events.jsonl          # Logged anomaly events (if present)
+    ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
+    │
+    ├── README.md                     # Project documentation
+    └── .gitignore                    # Git exclusions (.venv, logs, etc.)
 
 ---
 
@@ -93,15 +105,20 @@ python -m venv .venv
 
 Install required packages:
 
-```bash
-pip install psutil
-```
+    pip install psutil pandas scikit-learn joblib
 
-Run the live snapshot agent:
+Run the basic live snapshot agent:
 
-```bash
-python live_snapshot_agent.py
-```
+    python live_snapshot_agent.py
+
+Run the AI-based real-time anomaly detector:
+
+    python lesson8_realtime_anomaly.py
+
+After collecting enough history, retrain the model on recent data:
+
+    python retrain_anomaly_model.py
+
 
 You will see live system metrics printed and saved to a JSON file, including:
 
@@ -135,6 +152,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] Timestamped data collection
 [✓] Historical dataset builder
 [✓] AI anomaly detector
+[✓] Real-time anomaly detection + retraining pipeline
 [ ] NLP log classifier
 [ ] HTML dashboard
 [ ] Linux deployment
