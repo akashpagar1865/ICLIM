@@ -11,6 +11,8 @@ __pycache__/
 # Logs and generated data (we don’t need them in repo)
 *.log
 *.txt
+# but keep this file tracked
+!data/simulated_logs.txt
 *.json
 
 # Later we might keep an example JSON, but for now ignore all

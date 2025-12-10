@@ -1,0 +1,20 @@
+Jan 12 10:15:23 server1 sshd[1234]: Accepted password for user akash from 192.168.1.10 port 54321 ssh2
+Jan 12 10:16:01 server1 sshd[1235]: Failed password for invalid user root from 10.0.0.5 port 55221 ssh2
+Jan 12 10:16:05 server1 sshd[1236]: Failed password for invalid user admin from 10.0.0.5 port 55222 ssh2
+Jan 12 10:17:10 server1 systemd[1]: Starting Daily apt upgrade and clean activities...
+Jan 12 10:17:11 server1 systemd[1]: Finished Daily apt upgrade and clean activities.
+Jan 12 10:18:20 server1 kernel: CPU temperature above threshold, cpu clock throttled
+Jan 12 10:19:02 server1 kernel: CPU temperature back to normal
+Jan 12 10:20:30 server1 CRON[2001]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jan 12 10:21:00 server1 httpd[2222]: 200 OK GET /index.html from 203.0.113.5
+Jan 12 10:21:05 server1 httpd[2223]: 404 NOT FOUND GET /does-not-exist from 203.0.113.5
+Jan 12 10:22:14 server1 sshd[1237]: Failed password for root from 10.0.0.6 port 51432 ssh2
+Jan 12 10:23:01 server1 sshd[1238]: Failed password for root from 10.0.0.6 port 51433 ssh2
+Jan 12 10:24:15 server1 sshd[1239]: Accepted password for user dev from 192.168.1.20 port 60123 ssh2
+Jan 12 10:25:30 server1 sudo[3001]: akash : TTY=pts/0 ; PWD=/home/akash ; COMMAND=/bin/systemctl restart httpd
+Jan 12 10:26:42 server1 httpd[2224]: 500 INTERNAL SERVER ERROR GET /api/v1/payments from 203.0.113.6
+Jan 12 10:27:55 server1 kernel: Disk sda1 running out of space: 92% used
+Jan 12 10:28:10 server1 kernel: Disk sda1 usage back to normal: 70% used
+Jan 12 10:29:20 server1 systemd[1]: Started Backup job daily-backup.service.
+Jan 12 10:29:25 server1 backup[4001]: Backup completed successfully for /var/www
+Jan 12 10:30:31 server1 backup[4002]: Backup failed: permission denied for /etc/shadow
