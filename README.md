@@ -44,7 +44,7 @@ This repo is updated iteratively as I progress through each milestone.
     * uses recent snapshots from `snapshot_history.jsonl`
     * safely skips invalid JSON lines
     * can exclude known anomalies from training
-
+  * Log classification pipeline (TF-IDF + Logistic Regression) for INFO / WARNING / ERROR / SECURITY
 
 ### 🚧 **In Progress**
 
@@ -92,7 +92,8 @@ Cloud Integration  Azure VM (planned)
     ├── models/anomaly_model.pkl      # Saved IsolationForest model
     ├── anomaly_events.jsonl          # Logged anomaly events (if present)
     ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
-    │
+    ├── analysis/log_classifier.py    # data/simulated_logs.txt
+    ├── 
     ├── README.md                     # Project documentation
     └── .gitignore                    # Git exclusions (.venv, logs, etc.)
 
