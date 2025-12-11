@@ -4,16 +4,46 @@
 *A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
 
 ICLIM: Intelligent Cloud/Linux Infrastructure Monitor
+=====================================================
 
-           ┌────────────┐
-           │ Live Agent │── CPU/MEM/DISK snapshots ──┐
-           └────────────┘                             │
-                                                      ▼
-                                              snapshot_history.jsonl
-                                                      ▼
-           ┌──────────────────────┐           ┌──────────────────────┐
-           │ Anomaly Training     │──model──▶│ Realtime Anomaly Agent│
-           └──────────────────────┘           └──────────────────────┘
+                   +------------------+
+                   |     Live Agent   |
+                   +------------------+
+                           |
+                           |  CPU / MEM / DISK snapshots
+                           v
+                snapshot_history.jsonl
+                           |
+                           v
+                  +--------------------+
+                  |   Anomaly Training |
+                  +--------------------+
+                           |
+                           |  model.pkl
+                           v
+               +--------------------------+
+               | Realtime Anomaly Agent   |
+               +--------------------------+
+
+                           (Phase 2)
+                           =========
+
+                   +------------------+
+                   |    Log Events    |
+                   +------------------+
+                           |
+                           v
+                clean_log_line()  →  TF-IDF → Logistic Regression
+                           |
+                           v
+               +--------------------------+
+               |   Log Classification     |
+               |  (info / warning / error |
+               |      / security)         |
+               +--------------------------+
+                           |
+                           v
+                  classification_summary
 
 ---
 
@@ -48,11 +78,10 @@ This repo is updated iteratively as I progress through each milestone.
 
 ### 🚧 **In Progress**
 
-* Basic NLP for log classification
+* Lightweight HTML dashboard
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Lightweight HTML dashboard
 * Packaging the agent for Linux (CentOS VM)
 * Deployment on Azure VM
 * Automation via GitHub Actions
@@ -92,7 +121,7 @@ Cloud Integration  Azure VM (planned)
     ├── models/anomaly_model.pkl      # Saved IsolationForest model
     ├── anomaly_events.jsonl          # Logged anomaly events (if present)
     ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
-    ├── analysis/log_classifier.py    # data/simulated_logs.txt
+    ├── analysis/log_classifier.py    # data/centos_logs.txt
     ├── 
     ├── README.md                     # Project documentation
     └── .gitignore                    # Git exclusions (.venv, logs, etc.)
@@ -166,7 +195,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] Historical dataset builder
 [✓] AI anomaly detector
 [✓] Real-time anomaly detection + retraining pipeline
-[ ] NLP log classifier
+[✓] NLP log classifier
 [ ] HTML dashboard
 [ ] Linux deployment
 [ ] Cloud deployment (Azure)
