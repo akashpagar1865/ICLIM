@@ -1,9 +1,8 @@
 
-# ICLIM — Intelligent Cloud-Integrated Linux Monitor
+# ICLIM — Intelligent Cloud-Infrastructure Linux Monitor
 
 *A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
 
-ICLIM: Intelligent Cloud/Linux Infrastructure Monitor
 =====================================================
 
                    +------------------+
