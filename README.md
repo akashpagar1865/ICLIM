@@ -5,44 +5,124 @@
 
 =====================================================
 
-                   +------------------+
-                   |     Live Agent   |
-                   +------------------+
-                           |
-                           |  CPU / MEM / DISK snapshots
-                           v
+            ┌──────────────────────────┐
+            │        Linux VM           │
+            │ (Local / Azure / CentOS)  │
+            └─────────────┬────────────┘
+                        │
+                        │  system metrics + logs
+                        │
+            ┌─────────────▼────────────┐
+            │        Live Agent         │
+            │  (CPU / MEM / DISK)       │
+            └─────────────┬────────────┘
+                        │
+                        │  periodic snapshots
+                        ▼
                 snapshot_history.jsonl
-                           |
-                           v
-                  +--------------------+
-                  |   Anomaly Training |
-                  +--------------------+
-                           |
-                           |  model.pkl
-                           v
-               +--------------------------+
-               | Realtime Anomaly Agent   |
-               +--------------------------+
+                        │
+                        │
+            ┌─────────────▼────────────┐
+            │     Anomaly Training      │
+            │ (baseline behavior model) │
+            └─────────────┬────────────┘
+                        │
+                        │  anomaly_model.pkl
+                        ▼
+            ┌─────────────▼────────────┐
+            │  Realtime Anomaly Agent   │
+            │ (detects deviations)     │
+            └─────────────┬────────────┘
+                        │
+                        │  anomaly events
+                        ▼
+                anomaly_events.jsonl
 
-                           (Phase 2)
-                           =========
 
-                   +------------------+
-                   |    Log Events    |
-                   +------------------+
-                           |
-                           v
-                clean_log_line()  →  TF-IDF → Logistic Regression
-                           |
-                           v
-               +--------------------------+
-               |   Log Classification     |
-               |  (info / warning / error |
-               |      / security)         |
-               +--------------------------+
-                           |
-                           v
-                  classification_summary
+            =========================================================
+                            PHASE 2 — LOG INTELLIGENCE
+            =========================================================
+
+            ┌──────────────────────────┐
+            │      System Logs          │
+            │  (/var/log/messages,     │
+            │   sshd, systemd, etc.)   │
+            └─────────────┬────────────┘
+                        │
+                        │
+                        ▼
+                    clean_log_line()
+            (timestamp / host / PID removal)
+                        │
+                        │
+                        ▼
+                TF-IDF Vectorization
+                        │
+                        │
+                        ▼
+            Logistic Regression Model
+                        │
+                        │
+                        ▼
+            ┌──────────────────────────┐
+            │   Log Classification      │
+            │  info / warning / error   │
+            │        / security         │
+            └─────────────┬────────────┘
+                        │
+                        │  summaries + alerts
+                        ▼
+                classification_summary
+
+
+            =========================================================
+                            PHASE 3 — VISUALIZATION
+            =========================================================
+
+            ┌──────────────────────────┐
+            │   Dashboard Generator     │
+            │ (generate_dashboard.py)  │
+            └─────────────┬────────────┘
+                        │
+                        │  matplotlib charts
+                        ▼
+                PNG Charts (CPU, MEM,
+                    DISK, anomalies)
+                        │
+                        │
+                        ▼
+            ┌──────────────────────────┐
+            │    HTML Dashboard         │
+            │     index.html            │
+            │  (static, portable)      │
+            └─────────────┬────────────┘
+                        │
+                        │
+                        ▼
+                    GitHub Pages /
+                    Local Browser
+
+
+            =========================================================
+                        PHASE 4 — AUTOMATION & CLOUD
+            =========================================================
+
+            ┌──────────────────────────┐
+            │     GitHub Actions        │
+            │ (scheduled workflows)    │
+            └─────────────┬────────────┘
+                        │
+                        │  run agents + analysis
+                        ▼
+                    Artifacts / Reports
+                        │
+                        │
+                        ▼
+            ┌──────────────────────────┐
+            │        Azure Cloud        │
+            │  Linux VM + Blob Storage │
+            └──────────────────────────┘
+
 
 ---
 
@@ -74,7 +154,7 @@ This repo is updated iteratively as I progress through each milestone.
     * safely skips invalid JSON lines
     * can exclude known anomalies from training
   * Log classification pipeline (TF-IDF + Logistic Regression) for INFO / WARNING / ERROR / SECURITY
-  * Lightweight HTML dashboard
+  * Lightweight HTML dashboard with .png charts
 
 ### 🚧 **In Progress**
 
@@ -94,10 +174,10 @@ Component          Tools
 Language           Python
 Metrics            psutil
 Data Format        JSON / JSONL
-AI/ML              scikit-learn (IsolationForest), future: TF-IDF
+AI/ML              scikit-learn (IsolationForest), TF-IDF
 Analysis           pandas
 Model Persistence  joblib
-Dashboard          HTML + charts
+Dashboard          HTML + PNG charts
 Cloud Integration  Azure VM (planned)
 
 ---
@@ -105,28 +185,38 @@ Cloud Integration  Azure VM (planned)
 ## 📂 System Architecture
 
     ICLIM/
+    ├── agents/
+    │   ├── live_agent.py
+    │   ├── snapshot_agent.py
+    │   ├── realtime_anomaly_agent.py
+    │   └── history_logger.py
     │
-    ├── Experiments/                  # Learning scripts & practice exercises
+    ├── analysis/
+    │   ├── log_classifier.py
+    │   ├── anomaly_training.py
+    │   ├── anomaly_retrain.py
+    │   ├── history_analysis.py
+    │   ├── dashboard_utils.py
+    │   └── generate_dashboard.py
     │
-    ├── live_snapshot_agent.py        # Basic real-time system metrics collector
-    ├── snapshot_file_agent.py        # Creates & stores static snapshots
-    ├── agents/history_logger.py      # Timestamped history builder
-    ├── analysis/history_analysis.py  # pandas-based history analysis
-    ├── analysis/anomaly_training.py  # Initial model training on history
-    ├── agents/realtime_anomaly_agent.py  # Real-time AI anomaly detector
-    ├── analysis/anomaly_retrain.py   # Retrains IsolationForest model from history
+    ├── dashboard/
+    │   ├── index.html
+    │   └── charts/
     │
-    ├── data/snapshot_history.jsonl   # Growing history of snapshots
-    ├── models/anomaly_model.pkl      # Saved IsolationForest model
-    ├── anomaly_events.jsonl          # Logged anomaly events (if present)
-    ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
-    ├── analysis/log_classifier.py    # data/centos_logs.txt
-    ├── analysis/generate_dashboard.py # Orchestrates the entire dashboard build process
-    ├── analysis/dashboard_utils.py   # Loads snapshot data and prepares it for visualization
-    ├── dashboard/index.html          # Final static dashboard output
-    ├──
-    ├── README.md                     # Project documentation
-    └── .gitignore                    # Git exclusions (.venv, logs, etc.)
+    ├── data/
+    │   ├── snapshot_history.jsonl
+    │   ├── anomaly_events.jsonl
+    │   ├── centos_logs.txt
+    │   └── simulated_logs.txt     
+    │
+    ├── models/
+    │   ├── log_classifier.pkl
+    │   └── anomaly_model.pkl
+    │
+    ├── requirements.txt
+    ├── README.md
+    └── .gitignore
+
 
 ---
 
@@ -139,37 +229,24 @@ git clone https://github.com/akashpagar1865/ICLIM.git
 cd ICLIM
 ```
 
-Create and activate a virtual environment:
+# How to Run (Local)
 
-```bash
-python -m venv .venv
-.\.venv\Scripts\activate      # Windows
-# source .venv/bin/activate   # Linux/macOS
-```
+1. Create virtual environment
+   python -m venv .venv
+   source .venv/bin/activate  (Linux/Mac)
+   .\.venv\Scripts\activate   (Windows)
 
-Install required packages:
+2. Install dependencies
+   pip install -r requirements.txt
 
-    pip install psutil pandas scikit-learn joblib
+3. Run agents
+   python agents/snapshot_agent.py
 
-Run the basic live snapshot agent:
+4. Generate dashboard
+   python analysis/generate_dashboard.py
 
-    python live_snapshot_agent.py
-
-Run the AI-based real-time anomaly detector:
-
-    python lesson8_realtime_anomaly.py
-
-After collecting enough history, retrain the model on recent data:
-
-    python retrain_anomaly_model.py
-
-
-You will see live system metrics printed and saved to a JSON file, including:
-
-* CPU usage (%)
-* Memory usage (%)
-* Disk usage (%)
-* Server identifier
+Output:
+- dashboard/index.html
 
 ---
 
@@ -198,7 +275,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] AI anomaly detector
 [✓] Real-time anomaly detection + retraining pipeline
 [✓] NLP log classifier
-[ ] HTML dashboard
+[✓] HTML dashboard
 [ ] Linux deployment
 [ ] Cloud deployment (Azure)
 [ ] CI/CD automation
