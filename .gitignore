@@ -14,5 +14,6 @@ __pycache__/
 # but keep this file tracked
 !data/simulated_logs.txt
 *.json
+!requirements.txt
 
 # Later we might keep an example JSON, but for now ignore all
