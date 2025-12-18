@@ -74,14 +74,14 @@ This repo is updated iteratively as I progress through each milestone.
     * safely skips invalid JSON lines
     * can exclude known anomalies from training
   * Log classification pipeline (TF-IDF + Logistic Regression) for INFO / WARNING / ERROR / SECURITY
+  * Lightweight HTML dashboard
 
 ### 🚧 **In Progress**
 
-* Lightweight HTML dashboard
+* Packaging the agent for Linux (CentOS VM)
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Packaging the agent for Linux (CentOS VM)
 * Deployment on Azure VM
 * Automation via GitHub Actions
 
@@ -97,7 +97,7 @@ Data Format        JSON / JSONL
 AI/ML              scikit-learn (IsolationForest), future: TF-IDF
 Analysis           pandas
 Model Persistence  joblib
-Dashboard (Planned) HTML + charts
+Dashboard          HTML + charts
 Cloud Integration  Azure VM (planned)
 
 ---
@@ -113,7 +113,7 @@ Cloud Integration  Azure VM (planned)
     ├── agents/history_logger.py      # Timestamped history builder
     ├── analysis/history_analysis.py  # pandas-based history analysis
     ├── analysis/anomaly_training.py  # Initial model training on history
-    ├── lesson8_realtime_anomaly.py   # Real-time AI anomaly detector
+    ├── agents/realtime_anomaly_agent.py  # Real-time AI anomaly detector
     ├── analysis/anomaly_retrain.py   # Retrains IsolationForest model from history
     │
     ├── data/snapshot_history.jsonl   # Growing history of snapshots
@@ -121,7 +121,10 @@ Cloud Integration  Azure VM (planned)
     ├── anomaly_events.jsonl          # Logged anomaly events (if present)
     ├── known_anomalies.jsonl         # Optional: timestamps to exclude from training
     ├── analysis/log_classifier.py    # data/centos_logs.txt
-    ├── 
+    ├── analysis/generate_dashboard.py # Orchestrates the entire dashboard build process
+    ├── analysis/dashboard_utils.py   # Loads snapshot data and prepares it for visualization
+    ├── dashboard/index.html          # Final static dashboard output
+    ├──
     ├── README.md                     # Project documentation
     └── .gitignore                    # Git exclusions (.venv, logs, etc.)
 
