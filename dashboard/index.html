@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ICLIM Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #0e1117;
+            color: #e6edf3;
+            padding: 20px;
+        }
+        img {
+            width: 90%;
+            margin-bottom: 30px;
+            border: 1px solid #30363d;
+        }
+        .alert {
+            padding: 12px;
+            background-color: #3b1d1d;
+            border-left: 5px solid #f85149;
+            margin-bottom: 20px;
+        }
+        h2 {
+            border-bottom: 1px solid #30363d;
+        }
+    </style>
+</head>
+<body>
+
+<h1>ICLIM — Infrastructure Monitoring Dashboard</h1>
+
+<div id="alerts"></div>
+
+<script>
+fetch("alerts.json")
+  .then(res => res.json())
+  .then(data => {
+    if (data.security > 0) {
+        document.getElementById("alerts").innerHTML +=
+        `<div class="alert">Security alerts detected: ${data.security}</div>`;
+    }
+    if (data.error > 0) {
+        document.getElementById("alerts").innerHTML +=
+        `<div class="alert">System errors detected: ${data.error}</div>`;
+    }
+  });
+</script>
+
+<h2>CPU Usage</h2>
+<img src="cpu_history.png">
+
+<h2>Memory Usage</h2>
+<img src="mem_history.png">
+
+<h2>Disk Usage</h2>
+<img src="disk_history.png">
+
+</body>
+</html>
