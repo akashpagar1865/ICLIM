@@ -293,7 +293,7 @@ This is a learning-first project, but feedback, suggestions, or guidance from th
 
 If you’d like to connect professionally or discuss cloud/infra engineering roles:
 
-**LinkedIn:** [www.linkedin.com/in/akash-pagar-23316816b/](www.linkedin.com/in/akash-pagar-23316816b/)
+**LinkedIn:** [https://www.linkedin.com/in/akash-pagar-23316816b/](www.linkedin.com/in/akash-pagar-23316816b/)
 **GitHub:** [https://github.com/akashpagar1865](https://github.com/akashpagar1865)
 
 ---
