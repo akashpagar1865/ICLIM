@@ -155,14 +155,14 @@ This repo is updated iteratively as I progress through each milestone.
     * can exclude known anomalies from training
   * Log classification pipeline (TF-IDF + Logistic Regression) for INFO / WARNING / ERROR / SECURITY
   * Lightweight HTML dashboard with .png charts
+  * Deployed realtime anomaly agent as systemd service on CentOS
 
 ### 🚧 **In Progress**
 
-* Packaging the agent for Linux (CentOS VM)
+  * Deployment on Azure VM
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Deployment on Azure VM
 * Automation via GitHub Actions
 
 ---
@@ -178,6 +178,7 @@ AI/ML              scikit-learn (IsolationForest), TF-IDF
 Analysis           pandas
 Model Persistence  joblib
 Dashboard          HTML + PNG charts
+Linux VM (CentOS)  Systemd service
 Cloud Integration  Azure VM (planned)
 
 ---
@@ -276,7 +277,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] Real-time anomaly detection + retraining pipeline
 [✓] NLP log classifier
 [✓] HTML dashboard
-[ ] Linux deployment
+[✓] Linux deployment
 [ ] Cloud deployment (Azure)
 [ ] CI/CD automation
 ```
