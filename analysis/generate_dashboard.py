@@ -27,20 +27,34 @@ def generate_charts(df, outdir="dashboard"):
 
     print("[INFO] Metric charts generated")
 
-#Function for Alerts from classifier output
+import os
+import json
+
+# Function for Alerts from classifier output
 def generate_alerts(outdir="dashboard"):
     model = load_or_train_model()
-    df = classify_logs(model, "data/centos_logs.txt")
+    log_file = "data/centos_logs.txt"
 
-    alerts = {
-        "security": int((df["label"] == "security").sum()),
-        "error": int((df["label"] == "error").sum())
-    }
+    # CI-safe guard
+    if not os.path.exists(log_file):
+        print("[WARN] centos_logs.txt not found. Skipping alert generation.")
+        alerts = {
+            "security": 0,
+            "error": 0
+        }
+    else:
+        df = classify_logs(model, log_file)
+        alerts = {
+            "security": int((df["label"] == "security").sum()),
+            "error": int((df["label"] == "error").sum())
+        }
 
+    os.makedirs(outdir, exist_ok=True)
     with open(f"{outdir}/alerts.json", "w") as f:
         json.dump(alerts, f, indent=2)
 
     print("[INFO] Alert summary generated")
+
 
 #Generate static HTML dashboard
 def generate_html(outdir="dashboard"):
