@@ -156,6 +156,7 @@ This repo is updated iteratively as I progress through each milestone.
   * Log classification pipeline (TF-IDF + Logistic Regression) for INFO / WARNING / ERROR / SECURITY
   * Lightweight HTML dashboard with .png charts
   * Deployed realtime anomaly agent as systemd service on CentOS
+  * CI/CD pipeline validated using GitHub Actions (Python 3.9, Linux runner)
 
 ### 🚧 **In Progress**
 
@@ -163,7 +164,7 @@ This repo is updated iteratively as I progress through each milestone.
 
 ### 🧠 **Planned (Upcoming Milestones)**
 
-* Automation via GitHub Actions
+* Final touches
 
 ---
 
@@ -179,6 +180,7 @@ Analysis           pandas
 Model Persistence  joblib
 Dashboard          HTML + PNG charts
 Linux VM (CentOS)  Systemd service
+CI/CD Pipeline     Git Hub Actions 
 Cloud Integration  Azure VM (planned)
 
 ---
@@ -279,7 +281,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] HTML dashboard
 [✓] Linux deployment
 [ ] Cloud deployment (Azure)
-[ ] CI/CD automation
+[✓] CI/CD automation
 ```
 
 ---
