@@ -290,16 +290,20 @@ def summarize_classification(df: pd.DataFrame) -> None:
 
 #Function main – glue it all together
 def main():
-    model = load_or_train_model()    
+    model = load_or_train_model()
 
-    df = classify_logs(model,LOG_FILE)
+    # CI-safe: only classify logs if file exists
+    if not os.path.exists(LOG_FILE):
+        print(f"[CI INFO] {LOG_FILE} not found — skipping log classification")
+        return
+
+    df = classify_logs(model, LOG_FILE)
+
     if df.empty:
         return
-    
-    print("\n=== Classified Logs (first 10) ===")
-    # show cleaned text so you can verify timestamp/host removal
-    print(df[["label", "cleaned", "raw"]].head(10).to_string(index=False))
 
+    print("\n=== Classified Logs (first 10) ===")
+    print(df[["label", "cleaned", "raw"]].head(10).to_string(index=False))
 
     summarize_classification(df)
 
