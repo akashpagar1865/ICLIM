@@ -3,7 +3,12 @@
 
 *A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
 
-=====================================================
+## Overview
+
+ICLIM is a self-built Linux system observability and automation project, designed to simulate real-world infrastructure monitoring workflows on cloud Linux VMs. It collects system metrics, detects anomalies using AI
+models, and produces visual insights — all built incrementally to mirror industry practices in SRE, monitoring, and cloud operations.
+
+===================================================================================================================
 
             ┌──────────────────────────┐
             │        Linux VM           │
@@ -124,17 +129,7 @@
             └──────────────────────────┘
 
 
----
-
-## Overview
-
-ICLIM is a hands-on infrastructure learning project where I’m building a monitoring agent that collects system metrics, stores structured snapshots, and prepares data for cloud automation and AI-powered analysis.
-
-The focus is on understanding how real-world sysadmin, cloud, and DevOps teams build monitoring, alerting, and lightweight automation.
-
-This repo is updated iteratively as I progress through each milestone.
-
----
+===================================================================================================================
 
 ## Core Capabilities (Current + Upcoming)
 
@@ -157,13 +152,11 @@ This repo is updated iteratively as I progress through each milestone.
   * Lightweight HTML dashboard with .png charts
   * Deployed realtime anomaly agent as systemd service on CentOS
   * CI/CD pipeline validated using GitHub Actions (Python 3.9, Linux runner)
-  * Deployed on Azure VM ( Ubuntu)
+  * Running on Azure Ubuntu VM with systemd persistence
+  * CI validation with GitHub Actions
+  * Real-world Linux troubleshooting (SELinux, service failures)
 
-### 🚧 **In Progress**
-
-  * Final touches
-
----
+===================================================================================================================
 
 ## 🛠 Tech Stack
 
@@ -180,7 +173,7 @@ Linux VM (CentOS)  Systemd service
 CI/CD Pipeline     Git Hub Actions 
 Cloud Integration  Azure VM
 
----
+===================================================================================================================
 
 ## 📂 System Architecture
 
@@ -218,7 +211,7 @@ Cloud Integration  Azure VM
     └── .gitignore
 
 
----
+===================================================================================================================
 
 ## ▶️ Running the Current Agent - Execution Flow
 
@@ -248,7 +241,7 @@ cd ICLIM
 Output:
 - dashboard/index.html
 
----
+===================================================================================================================
 
 ## 🎯 Learning Goals
 
@@ -262,7 +255,10 @@ This project supports my transition into:
 
 Each component is added incrementally, with commits and documentation reflecting real engineering workflow.
 
----
+👨‍💻 Why I Built This
+This project was constructed to mirror infrastructure and observability work done in Cloud and SRE roles. Each commit reflects a real-world milestone: from Linux metric collection to failure handling and resilience.
+
+===================================================================================================================
 
 ## 📈 Roadmap Overview
 
@@ -281,7 +277,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] CI/CD automation
 ```
 
----
+===================================================================================================================
 
 ## 🤝 Contributions & Feedback
 
