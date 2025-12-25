@@ -152,8 +152,9 @@ models, and produces visual insights — all built incrementally to mirror indus
   * Lightweight HTML dashboard with .png charts
   * Deployed realtime anomaly agent as systemd service on CentOS
   * CI/CD pipeline validated using GitHub Actions (Python 3.9, Linux runner)
-  * Running on Azure Ubuntu VM with systemd persistence
+  * Deployed and managed as a **systemd service** on an **Azure Ubuntu VM**
   * CI validation with GitHub Actions
+  * Persistent service startup across reboots
   * Real-world Linux troubleshooting (SELinux, service failures)
 
 ===================================================================================================================
@@ -213,32 +214,29 @@ Cloud Integration  Azure VM
 
 ===================================================================================================================
 
-## ▶️ Running the Current Agent - Execution Flow
+## ▶️ Getting Started - Execution Flow
 
-Clone the repo and enter the project folder:
+1. Clone the Git repo
 
-```bash
-git clone https://github.com/akashpagar1865/ICLIM.git
-cd ICLIM
-```
-
-# How to Run (Local)
-
-1. Create virtual environment
+2. Create virtual environment
    python -m venv .venv
    source .venv/bin/activate  (Linux/Mac)
    .\.venv\Scripts\activate   (Windows)
-
-2. Install dependencies
+      
+```bash
+git clone https://github.com/akashpagar1865/ICLIM.git
+cd ICLIM
+'''
+3. Install dependencies
    pip install -r requirements.txt
 
-3. Run agents
+4. Run agents
    python agents/snapshot_agent.py
 
-4. Generate dashboard
+5. Generate dashboard
    python analysis/generate_dashboard.py
 
-Output:
+6. Output:
 - dashboard/index.html
 
 ===================================================================================================================
