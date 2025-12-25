@@ -1,7 +1,8 @@
 
 # ICLIM — Intelligent Cloud-Linux Infrastructure Monitor
 
-*A Python-based system monitoring agent built around Linux, Cloud, and AI-driven automation.*
+*ICLIM is a Python-based system and log monitoring project built to reflect real-world Cloud/SRE
+engineering practices — including Azure deployment, systemd services, CI/CD automation, and anomaly detection..*
 
 ## Overview
 
@@ -133,6 +134,10 @@ models, and produces visual insights — all built incrementally to mirror indus
 
 ## Core Capabilities (Current + Upcoming)
 
+## ☁️ Cloud Deployment
+
+This project has been successfully deployed on an Azure Ubuntu VM, configured with secure access and persistent services using systemd. CI pipelines validate changes before deployment.
+
 ### ✅ Completed
 
   * Python fundamentals (functions, data structures, modules)
@@ -214,30 +219,121 @@ Cloud Integration  Azure VM
 
 ===================================================================================================================
 
-## ▶️ Getting Started - Execution Flow
+## 🚀 Getting Started - Run Instructions
 
-1. Clone the Git repo
+This section explains how to run ICLIM locally or on a Linux VM.
 
-2. Create virtual environment
-   python -m venv .venv
-   source .venv/bin/activate  (Linux/Mac)
-   .\.venv\Scripts\activate   (Windows)
-      
-```bash
+✅ Prerequisites
+
+Linux or macOS environment (tested on Ubuntu)
+
+Python 3.9+
+
+git
+
+Basic familiarity with terminal commands
+
+Note: The project is designed to mirror real Linux/cloud environments and works best on a Linux VM.
+
+📦 Clone the Repository
 git clone https://github.com/akashpagar1865/ICLIM.git
 cd ICLIM
-'''
-3. Install dependencies
-   pip install -r requirements.txt
 
-4. Run agents
-   python agents/snapshot_agent.py
+🐍 Create and Activate Virtual Environment
+python3 -m venv .venv
+source .venv/bin/activate
 
-5. Generate dashboard
-   python analysis/generate_dashboard.py
 
-6. Output:
-- dashboard/index.html
+Upgrade pip and install dependencies:
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
+▶️ Run Snapshot Monitoring Agent (One-Time)
+
+The snapshot agent collects a point-in-time view of system metrics.
+
+python agents/snapshot_agent.py
+
+
+Expected outcome:
+
+System metrics are collected
+
+Output files are generated in the data/output directory
+
+🔁 Run Realtime Monitoring Agent (Continuous)
+
+The realtime agent runs continuously and simulates a long-running production service.
+
+python agents/realtime_agent.py
+
+
+Expected behavior:
+
+Agent runs in a loop
+
+Periodically collects metrics and logs
+
+Designed to be managed via systemd in production setups
+
+📊 Generate Dashboard
+
+Once data is collected, generate the visualization dashboard:
+
+python dashboard/generate_dashboard.py
+
+
+This produces:
+
+Graphs and summaries based on collected metrics
+
+A simple visual representation of system behavior
+
+⚙️ (Optional) Run as a systemd Service (Linux)
+
+To simulate production-style deployment, the realtime agent can be configured as a systemd service.
+
+High-level steps:
+
+Create a systemd service file
+
+Point it to the virtualenv Python binary
+
+Enable and start the service
+
+This allows the agent to:
+
+Start automatically on boot
+
+Recover after reboots or crashes
+
+Detailed systemd configuration is documented separately.
+
+
+🧪 Typical Execution Flow (Quick Reference)
+
+For a first-time run:
+
+Clone repo
+
+Create virtual environment
+
+Run snapshot agent
+
+Run realtime agent
+
+Generate dashboard
+
+
+🛑 Stopping the Agents
+
+Press CTRL + C to stop agents running in the foreground
+
+For systemd-managed services, use:
+
+sudo systemctl stop iclim.service
+
 
 ===================================================================================================================
 
