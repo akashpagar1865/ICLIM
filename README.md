@@ -157,14 +157,11 @@ This repo is updated iteratively as I progress through each milestone.
   * Lightweight HTML dashboard with .png charts
   * Deployed realtime anomaly agent as systemd service on CentOS
   * CI/CD pipeline validated using GitHub Actions (Python 3.9, Linux runner)
+  * Deployed on Azure VM ( Ubuntu)
 
 ### 🚧 **In Progress**
 
-  * Deployment on Azure VM
-
-### 🧠 **Planned (Upcoming Milestones)**
-
-* Final touches
+  * Final touches
 
 ---
 
@@ -181,7 +178,7 @@ Model Persistence  joblib
 Dashboard          HTML + PNG charts
 Linux VM (CentOS)  Systemd service
 CI/CD Pipeline     Git Hub Actions 
-Cloud Integration  Azure VM (planned)
+Cloud Integration  Azure VM
 
 ---
 
@@ -280,7 +277,7 @@ Each component is added incrementally, with commits and documentation reflecting
 [✓] NLP log classifier
 [✓] HTML dashboard
 [✓] Linux deployment
-[ ] Cloud deployment (Azure)
+[✓] Cloud deployment (Azure)
 [✓] CI/CD automation
 ```
 
