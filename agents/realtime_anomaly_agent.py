@@ -4,7 +4,22 @@ import time
 from datetime import datetime
 import joblib
 import warnings
+import os
+
 warnings.filterwarnings("ignore", category=UserWarning)
+
+# -------------------------------
+# Base project paths (PRODUCTION SAFE)
+# -------------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, "models", "anomaly_model.pkl")
+LOG_DIR = os.path.join(BASE_DIR, "logs")
+HISTORY_FILE = os.path.join(LOG_DIR, "snapshot_history.jsonl")
+ANOMALY_FILE = os.path.join(LOG_DIR, "anomaly_events.jsonl")
+
+# ensure logs directory exists
+os.makedirs(LOG_DIR, exist_ok=True)
 
 #Reuse helper functions ( getting timestamps, creating snapshot, getting live snapshot)
 def get_timestamp():
@@ -26,7 +41,7 @@ def get_live_snapshot(server_name):
     return create_snapshot(cpu,mem, disk, server_name)
 
 #Load the trained model
-def load_model(path="anomaly_model.pkl"):
+def load_model(path=MODEL_PATH):
     model = joblib.load(path)
     return model
 
@@ -41,13 +56,18 @@ def is_anomaly(model, snapshot):
     return pred == -1
 
 #Optional: log anomalies to a file
-def log_anomaly(snapshot, filename = "anomaly_events.jsonl"):
+def log_anomaly(snapshot, filename=ANOMALY_FILE):
+    with open(filename, "a") as f:
+        f.write(json.dumps(snapshot) + "\n")
+
+#Function to update live snapshot into history
+def append_snapshot_to_history(snapshot, filename=HISTORY_FILE):
     with open(filename, "a") as f:
         f.write(json.dumps(snapshot) + "\n")
 
 #Main loop — real-time anomaly detection
 def main():
-    model = load_model("anomaly_model.pkl")
+    model = load_model()
     print("Real-time anomaly detector started (CTRL+C to stop)\n")
 
     interval = 5  #seconds
@@ -68,18 +88,6 @@ def main():
 
         time.sleep(interval)
 
-#Function to update live snapshot into history
-HISTORY_FILE = "snapshot_history.jsonl"
-
-def append_snapshot_to_history(snapshot, filename=HISTORY_FILE):
-    #Append every live snapshot (normal or anomaly) to history file.
-    with open(filename, "a") as f:
-        f.write(json.dumps(snapshot) + "\n")
-
 
 if __name__ == "__main__":
     main()
-
-
-
-
