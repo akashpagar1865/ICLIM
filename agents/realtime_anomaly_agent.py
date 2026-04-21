@@ -68,12 +68,12 @@ def append_snapshot_to_history(snapshot, filename=HISTORY_FILE):
 #Main loop — real-time anomaly detection
 def main():
     model = load_model()
-    print("Real-time anomaly detector started (GitHub auto deploy test) (CTRL+C to stop)\n")
+    print("Real-time anomaly detector started.... (CTRL+C to stop)\n")
 
     interval = 5  #seconds
 
     while True:
-        snap = get_live_snapshot("Windows_Host")
+        snap = get_live_snapshot("Linux_Host")
         anomaly = is_anomaly(model, snap)
 
         # always record snapshot in history
