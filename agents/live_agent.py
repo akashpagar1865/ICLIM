@@ -1,5 +1,8 @@
 import json
-import psutil  
+import psutil 
+from utils.logger import setup_logger
+logger = setup_logger()
+
 
 #Function to create snapshot by adding structured data (Dictionary)
 def create_snapshot(cpu, mem, disk, name):
@@ -30,4 +33,4 @@ save_snapshot(snap, "latest_live_snapshot.json")
 with open("latest_live_snapshot.json", "r") as f:
     loaded = json.load(f)
 
-print("Loaded live snapshot", loaded)
+logger.info(f"Live snapshot loaded: {loaded}")

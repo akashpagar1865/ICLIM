@@ -5,6 +5,8 @@ from datetime import datetime
 import joblib
 import warnings
 import os
+from utils.logger import setup_logger
+logger = setup_logger()
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -67,27 +69,47 @@ def append_snapshot_to_history(snapshot, filename=HISTORY_FILE):
 
 #Main loop — real-time anomaly detection
 def main():
-    model = load_model()
-    print("Real-time anomaly detector started.... (CTRL+C to stop)\n")
+    logger.info("Real-time anomaly detector started")
+    try:
+        model = load_model()
+        logger.info("Model loaded successfully")
+    except Exception as e:
+        logger.error(f"Model loading failed: {str(e)}")
+        return
 
     interval = 5  #seconds
-
+    first_run = True
     while True:
-        snap = get_live_snapshot("Linux_Host")
-        anomaly = is_anomaly(model, snap)
+        try:
+            snap = get_live_snapshot("Windows_Host")
+            anomaly = is_anomaly(model, snap)
 
-        # always record snapshot in history
-        append_snapshot_to_history(snap)
+            append_snapshot_to_history(snap)
+            logger.info(f"Snapshot stored | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}")
 
-        if  anomaly:
-            print(f"[ALERT] {snap['timestamp']}  CPU={snap['cpu']}  MEM={snap['mem']}  DISK={snap['disk']}")
-            log_anomaly(snap)
+            if first_run:
+                logger.info(f"First snapshot collected: CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}")
+                first_run = False
 
-        else: 
-            print(f"[OK] {snap['timestamp']}  CPU={snap['cpu']}  MEM={snap['mem']}  DISK={snap['disk']}")
+            if anomaly:
+                logger.warning(
+                    f"ANOMALY DETECTED | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
+                )
+                log_anomaly(snap)
+            else:
+                logger.info(
+                    f"System Normal | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
+                )
 
-        time.sleep(interval)
+            time.sleep(interval)
 
+        except KeyboardInterrupt:
+            logger.info("🛑 Monitoring stopped by user")
+            break
+
+        except Exception as e:
+            logger.error(f"Error in main loop: {str(e)}")
+        
 
 if __name__ == "__main__":
     main()

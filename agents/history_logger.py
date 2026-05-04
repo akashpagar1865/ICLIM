@@ -2,6 +2,8 @@ import json
 import psutil
 import time
 from datetime import datetime
+from utils.logger import setup_logger
+logger = setup_logger()
 
 #Function to get current timestamp
 def get_timestamp():
@@ -33,12 +35,12 @@ def apend_snapshot (snapshot, filename):
 #Main monitoring loop
 history_file = "snapshot_history.jsonl"
 
-print("Starting monitoring... (Press ctr+C to stop) \n")
+logger.info("History monitoring started")
 
 while True:
     snap = get_live_snapshot("Windows_Host")
     apend_snapshot(snap, history_file)
 
-    print(snap) #Show live output
+    logger.info(f"Snapshot: {snap}")
     time.sleep(5) #wait 5 seconds
 

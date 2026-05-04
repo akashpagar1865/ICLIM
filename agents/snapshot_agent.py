@@ -1,3 +1,7 @@
+from utils.logger import setup_logger
+logger = setup_logger()
+
+
 # Function to create structured data (dictionary) from input metrics
 def create_snapshot(cpu, mem, disk, name):
     return{
@@ -27,4 +31,4 @@ with open("Latest_snapshot.json", "r") as f:
     loaded = json.load(f)
 
 #Printing parsed data
-print("Latest snapshot:", loaded)
+logger.info(f"Latest snapshot: {loaded}")
