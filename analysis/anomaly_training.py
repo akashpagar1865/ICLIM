@@ -44,7 +44,10 @@ def save_model(model, filename="anomaly_model.pkl"):
 
 #Main logic
 
-history_file= "snapshot_history.jsonl"
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+history_file = os.path.join(BASE_DIR, "logs", "snapshot_history.jsonl")
 
 df = load_history(history_file)
 df = prepare_df(df)
