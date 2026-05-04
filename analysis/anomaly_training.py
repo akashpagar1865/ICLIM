@@ -38,9 +38,14 @@ def detect_anomalies(model, features, df):
     return df
 
 #Function to save model
-def save_model(model, filename="anomaly_model.pkl"):
-    joblib.dump(model, filename)
-    print("Model saved as:", filename)
+def save_model(model):
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    MODEL_PATH = os.path.join(BASE_DIR, "models", "anomaly_model.pkl")
+
+    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+
+    joblib.dump(model, MODEL_PATH)
+    print("Model saved at:", MODEL_PATH)
 
 #Main logic
 
