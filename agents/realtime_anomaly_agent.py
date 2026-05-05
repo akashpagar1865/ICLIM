@@ -81,7 +81,10 @@ def main():
     first_run = True
     while True:
         try:
-            snap = get_live_snapshot("Windows_Host")
+            import socket
+            HOSTNAME = socket.gethostname()
+            snap = get_live_snapshot(HOSTNAME)
+
             anomaly = is_anomaly(model, snap)
 
             append_snapshot_to_history(snap)
