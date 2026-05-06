@@ -17,3 +17,9 @@ __pycache__/
 !requirements.txt
 
 # Later we might keep an example JSON, but for now ignore all
+
+#Remove models. These will be generated fresh once agent runs
+models/*.pkl
+
+#No need to save logs on repo
+logs/
