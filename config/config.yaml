@@ -1,0 +1,13 @@
+app:
+  interval: 5
+  hostname: auto
+
+paths:
+  base_dir: auto
+  logs_dir: logs
+  model_path: models/anomaly_model.pkl
+  history_file: logs/snapshot_history.jsonl
+  anomaly_file: logs/anomaly_events.jsonl
+
+logging:
+  level: INFO

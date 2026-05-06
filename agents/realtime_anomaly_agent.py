@@ -5,23 +5,11 @@ from datetime import datetime
 import joblib
 import warnings
 import os
+from utils.config_loader import load_config
 from utils.logger import setup_logger
 logger = setup_logger()
 
 warnings.filterwarnings("ignore", category=UserWarning)
-
-# -------------------------------
-# Base project paths (PRODUCTION SAFE)
-# -------------------------------
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-MODEL_PATH = os.path.join(BASE_DIR, "models", "anomaly_model.pkl")
-LOG_DIR = os.path.join(BASE_DIR, "logs")
-HISTORY_FILE = os.path.join(LOG_DIR, "snapshot_history.jsonl")
-ANOMALY_FILE = os.path.join(LOG_DIR, "anomaly_events.jsonl")
-
-# ensure logs directory exists
-os.makedirs(LOG_DIR, exist_ok=True)
 
 #Reuse helper functions ( getting timestamps, creating snapshot, getting live snapshot)
 def get_timestamp():
@@ -43,7 +31,7 @@ def get_live_snapshot(server_name):
     return create_snapshot(cpu,mem, disk, server_name)
 
 #Load the trained model
-def load_model(path=MODEL_PATH):
+def load_model(path):
     model = joblib.load(path)
     return model
 
@@ -58,36 +46,54 @@ def is_anomaly(model, snapshot):
     return pred == -1
 
 #Optional: log anomalies to a file
-def log_anomaly(snapshot, filename=ANOMALY_FILE):
+def log_anomaly(snapshot, filename):
     with open(filename, "a") as f:
         f.write(json.dumps(snapshot) + "\n")
 
 #Function to update live snapshot into history
-def append_snapshot_to_history(snapshot, filename=HISTORY_FILE):
+def append_snapshot_to_history(snapshot, filename):
     with open(filename, "a") as f:
         f.write(json.dumps(snapshot) + "\n")
 
 #Main loop — real-time anomaly detection
 def main():
+    config = load_config()
+    print("CONFIG LOADED:", config)
+
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+    MODEL_PATH = os.path.join(BASE_DIR, config["paths"]["model_path"])
+    LOG_DIR = os.path.join(BASE_DIR, config["paths"]["logs_dir"])
+    HISTORY_FILE = os.path.join(BASE_DIR, config["paths"]["history_file"])
+    ANOMALY_FILE = os.path.join(BASE_DIR, config["paths"]["anomaly_file"])
+
+    # ensure logs directory exists
+    os.makedirs(LOG_DIR, exist_ok=True)
+
     logger.info("Real-time anomaly detector started")
+
     try:
-        model = load_model()
+        model = load_model(MODEL_PATH)
         logger.info("Model loaded successfully")
     except Exception as e:
         logger.error(f"Model loading failed: {str(e)}")
         return
 
-    interval = 5  #seconds
+    interval = config["app"]["interval"]
     first_run = True
     while True:
         try:
             import socket
-            HOSTNAME = socket.gethostname()
+            if config["app"]["hostname"] == "auto":
+                HOSTNAME = socket.gethostname()
+            else:
+                HOSTNAME = config["app"]["hostname"]
+
             snap = get_live_snapshot(HOSTNAME)
 
             anomaly = is_anomaly(model, snap)
 
-            append_snapshot_to_history(snap)
+            append_snapshot_to_history(snap, HISTORY_FILE)
             logger.info(f"Snapshot stored | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}")
 
             if first_run:
@@ -98,7 +104,7 @@ def main():
                 logger.warning(
                     f"ANOMALY DETECTED | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
                 )
-                log_anomaly(snap)
+                log_anomaly(snap, ANOMALY_FILE)
             else:
                 logger.info(
                     f"System Normal | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
@@ -107,7 +113,7 @@ def main():
             time.sleep(interval)
 
         except KeyboardInterrupt:
-            logger.info("🛑 Monitoring stopped by user")
+            logger.info("Monitoring stopped by user")
             break
 
         except Exception as e:
