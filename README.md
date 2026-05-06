@@ -2,12 +2,11 @@
 # ICLIM — Intelligent Cloud-Linux Infrastructure Monitor
 
 *ICLIM is a Python-based system and log monitoring project built to reflect real-world Cloud/SRE
-engineering practices — including Azure deployment, systemd services, CI/CD automation, and anomaly detection..*
+engineering practices — including Azure deployment, systemd services, CI/CD automation, and anomaly detection.*
 
 ## Overview
 
-ICLIM is a self-built Linux system observability and automation project, designed to simulate real-world infrastructure monitoring workflows on cloud Linux VMs. It collects system metrics, detects anomalies using AI
-models, and produces visual insights — all built incrementally to mirror industry practices in SRE, monitoring, and cloud operations.
+ICLIM is a self-built Linux system observability and automation project, designed to simulate real-world infrastructure monitoring workflows on cloud Linux VMs. It collects system metrics, detects anomalies using ML-based anomaly detection using IsolationForest, and produces visual insights — all built incrementally to mirror industry practices in SRE, monitoring, and cloud operations.
 
 ===================================================================================================================
 
@@ -161,6 +160,11 @@ This project has been successfully deployed on an Azure Ubuntu VM, configured wi
   * CI validation with GitHub Actions
   * Persistent service startup across reboots
   * Real-world Linux troubleshooting (SELinux, service failures)
+  * YAML-based configuration system
+  * Structured logging with Python logging module
+  * Linux log rotation using logrotate
+  * Git branching workflow (dev + feature branches)
+  * Runtime-configurable monitoring intervals
 
 ===================================================================================================================
 
@@ -175,9 +179,21 @@ AI/ML              scikit-learn (IsolationForest), TF-IDF
 Analysis           pandas
 Model Persistence  joblib
 Dashboard          HTML + PNG charts
-Linux VM (CentOS)  Systemd service
-CI/CD Pipeline     Git Hub Actions 
+Linux Services     Systemd
+CI/CD Pipeline     GitHub Actions 
 Cloud Integration  Azure VM
+
+===================================================================================================================
+
+## Operational Features
+
+* systemd-managed Linux service
+* Automatic service restart on failure
+* Structured logging using Python logging module
+* Log rotation using logrotate
+* YAML-based runtime configuration
+* Git branching workflow (dev + feature branches)
+* Cross-environment deployment support (Windows/Linux/Azure)
 
 ===================================================================================================================
 
@@ -209,8 +225,14 @@ Cloud Integration  Azure VM
     │   └── simulated_logs.txt     
     │
     ├── models/
-    │   ├── log_classifier.pkl
-    │   └── anomaly_model.pkl
+    │   └──log_classifier.pkl
+    │
+    ├── config/
+    │   └── config.yaml
+    │
+    ├── utils/
+    │   ├── config_loader.py
+    │   └── logger.py
     │
     ├── requirements.txt
     ├── README.md
@@ -241,32 +263,22 @@ cd ICLIM
 
 🐍 Create and Activate Virtual Environment
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   #For Linux environments
+.venv\Scripts\Activate.ps1  #For Windows environments
 
 
 Upgrade pip and install dependencies:
-
 pip install --upgrade pip
 pip install -r requirements.txt
 
-▶️ Run Snapshot Monitoring Agent (One-Time)
+Update config/config.yaml to customize intervals and runtime behavior.
 
-The snapshot agent collects a point-in-time view of system metrics.
-
-python agents/snapshot_agent.py
-
-
-Expected outcome:
-
-System metrics are collected
-
-Output files are generated in the data/output directory
 
 🔁 Run Realtime Monitoring Agent (Continuous)
 
 The realtime agent runs continuously and simulates a long-running production service.
 
-python agents/realtime_agent.py
+python -m agents.realtime_anomaly_agent
 
 
 Expected behavior:
@@ -276,6 +288,7 @@ Agent runs in a loop
 Periodically collects metrics and logs
 
 Designed to be managed via systemd in production setups
+
 
 📊 Generate Dashboard
 
@@ -289,6 +302,7 @@ This produces:
 Graphs and summaries based on collected metrics
 
 A simple visual representation of system behavior
+
 
 ⚙️ (Optional) Run as a systemd Service (Linux)
 
@@ -318,8 +332,6 @@ For a first-time run:
 Clone repo
 
 Create virtual environment
-
-Run snapshot agent
 
 Run realtime agent
 
