@@ -75,7 +75,7 @@ This document describes:
 
     This assumption is true on existing environments but false on new deployments.
 
-   * Discovery History
+   * How the Issue Was Discovered
 
         Initial deployments succeeded because:
 

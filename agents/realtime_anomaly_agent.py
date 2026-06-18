@@ -7,6 +7,12 @@ import warnings
 import os
 from utils.config_loader import load_config
 from utils.logger import setup_logger
+from analysis.bootstrap import (
+    history_exists,
+    model_exists,
+    bootstrap_history,
+    bootstrap_model
+)
 logger = setup_logger()
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -71,6 +77,34 @@ def main():
     os.makedirs(LOG_DIR, exist_ok=True)
 
     logger.info("Real-time anomaly detector started")
+
+    # Bootstrap startup validation
+
+    if not history_exists(HISTORY_FILE):
+
+        logger.warning(
+            "History file missing. Starting bootstrap history generation."
+        )
+
+        import socket
+
+        if config["app"]["hostname"] == "auto":
+            HOSTNAME = socket.gethostname()
+        else:
+            HOSTNAME = config["app"]["hostname"]
+
+        bootstrap_history(
+            HISTORY_FILE,
+            HOSTNAME
+        )
+
+    if not model_exists(MODEL_PATH):
+
+        logger.warning(
+            "Model file missing. Starting bootstrap model training."
+        )
+
+        bootstrap_model(HISTORY_FILE)
 
     try:
         model = load_model(MODEL_PATH)

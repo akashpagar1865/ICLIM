@@ -7,17 +7,6 @@ from utils.logger import setup_logger
 
 logger = setup_logger()
 
-# Bootstrap history generation
-#
-# Purpose:
-# A brand-new deployment has no historical data.
-#
-# To create an initial baseline, collect
-# real CPU, memory and disk metrics from
-# the current system.
-#
-# The collected history is later used to
-# train the first anomaly detection model.
 
 def history_exists(history_path):
     exists = os.path.exists(history_path)
@@ -47,10 +36,6 @@ def model_exists(model_path):
 # Save anomaly_model.pkl
 
 def bootstrap_model(history_file):
-
-    logger.info(
-        "Model file missing. Starting model training."
-    )
 
     print(
         "\nModel file missing. Training initial model...\n"
@@ -100,7 +85,18 @@ def get_live_snapshot(hostname):
     return create_snapshot(cpu, mem, disk, hostname)
 
 
-# Bootstrap Function
+# Bootstrap history generation
+#
+# Purpose:
+# A brand-new deployment has no historical data.
+#
+# To create an initial baseline, collect
+# real CPU, memory and disk metrics from
+# the current system.
+#
+# The collected history is later used to
+# train the first anomaly detection model.
+
 def bootstrap_history(history_file, hostname, samples=30):
 
     logger.info(f"Bootstrap history generation started. Target samples: {samples}")
