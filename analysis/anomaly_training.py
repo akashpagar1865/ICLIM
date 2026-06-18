@@ -2,6 +2,12 @@ import pandas as pd
 from sklearn.ensemble import IsolationForest
 import json
 import joblib
+import os
+
+
+# Historical JSONL data is converted into a
+# pandas dataframe so it can be processed by
+# scikit-learn.
 
 #Function to load & prepare history data
 def load_history(filename):
@@ -16,9 +22,18 @@ def prepare_df(df):
     df= df.sort_values("timestamp")
     return df
 
+# Only numeric metrics are used for training.
+# Timestamp is useful for ordering but is not
+# included as a model feature.
+
 #Function to extract features for ML
 def get_features(df):
     return df[["cpu", "mem", "disk"]]
+
+# Isolation Forest learns normal system behavior
+# using CPU, Memory and Disk usage.
+# Later, realtime metrics are compared against
+# this baseline to identify unusual patterns.
 
 #Function to Train IsolationForest
 def train_model(features):
@@ -47,22 +62,42 @@ def save_model(model):
     joblib.dump(model, MODEL_PATH)
     print("Model saved at:", MODEL_PATH)
 
+
+def train_from_history(history_file):
+
+    # Complete training pipeline:
+    # Load history -> Prepare data -> Train model -> Save model
+    
+    df = load_history(history_file)
+    df = prepare_df(df)
+
+    features = get_features(df)
+
+    model = train_model(features)
+
+    df = detect_anomalies(
+        model,
+        features,
+        df
+    )
+
+    save_model(model)
+
+    return model
+
 #Main logic
+if __name__ == "__main__":
 
-import os
+    BASE_DIR = os.path.dirname(
+        os.path.dirname(__file__)
+    )
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-history_file = os.path.join(BASE_DIR, "logs", "snapshot_history.jsonl")
+    history_file = os.path.join(
+        BASE_DIR,
+        "logs",
+        "snapshot_history.jsonl"
+    )
 
-df = load_history(history_file)
-df = prepare_df(df)
+    model = train_from_history(history_file)
 
-features = get_features(df)
-model = train_model(features)
-
-df = detect_anomalies(model, features, df)
-
-print("\n--- Anomaly Detection Results ---")
-print(df[["timestamp", "cpu", "mem", "disk", "anomaly"]])
-
-save_model(model)
+    print("\n--- Model Training Complete ---")
