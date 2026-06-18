@@ -2,10 +2,22 @@ import os
 import json
 import psutil
 from datetime import datetime
+from analysis.anomaly_training import train_from_history
 from utils.logger import setup_logger
 
 logger = setup_logger()
 
+# Bootstrap history generation
+#
+# Purpose:
+# A brand-new deployment has no historical data.
+#
+# To create an initial baseline, collect
+# real CPU, memory and disk metrics from
+# the current system.
+#
+# The collected history is later used to
+# train the first anomaly detection model.
 
 def history_exists(history_path):
     exists = os.path.exists(history_path)
@@ -18,12 +30,48 @@ def model_exists(model_path):
     logger.info(f"Model file exists: {exists}")
     return exists
 
+# Bootstrap model creation
+#
+# Purpose:
+# Fresh deployments may not contain a trained model.
+#
+# Instead of duplicating training logic here,
+# we reuse the centralized training pipeline
+# from anomaly_training.py.
+#
+# Flow:
+# History File
+# ↓
+# Train Model
+# ↓
+# Save anomaly_model.pkl
+
+def bootstrap_model(history_file):
+
+    logger.info(
+        "Model file missing. Starting model training."
+    )
+
+    print(
+        "\nModel file missing. Training initial model...\n"
+    )
+
+    train_from_history(history_file)
+
+    logger.info(
+        "Initial model training completed."
+    )
+
+    print(
+        "\nInitial model training completed.\n"
+    )
+
 
 def ensure_directory(path):
     os.makedirs(path, exist_ok=True)
     logger.info(f"Directory ensured: {path}")
 
-# Helper Functions
+# Snapshot Collection Helpers
 def get_timestamp():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -37,6 +85,12 @@ def create_snapshot(cpu, mem, disk, hostname):
         "server": hostname
     }
 
+# Collect current system metrics.
+#
+# These metrics represent the current
+# health state of the machine and are
+# used for both history generation and
+# realtime monitoring.
 
 def get_live_snapshot(hostname):
     cpu = psutil.cpu_percent(interval=1)
