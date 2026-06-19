@@ -9,14 +9,32 @@ logger = setup_logger()
 
 
 def history_exists(history_path):
+
+    logger.info(
+        f"Checking history path: {os.path.abspath(history_path)}"
+    )
+
     exists = os.path.exists(history_path)
-    logger.info(f"History file exists: {exists}")
+
+    logger.info(
+        f"History file exists: {exists}"
+    )
+
     return exists
 
 
 def model_exists(model_path):
+
+    logger.info(
+        f"Checking model path: {os.path.abspath(model_path)}"
+    )
+
     exists = os.path.exists(model_path)
-    logger.info(f"Model file exists: {exists}")
+
+    logger.info(
+        f"Model file exists: {exists}"
+    )
+
     return exists
 
 # Bootstrap model creation
