@@ -228,3 +228,17 @@ Startup validation and recovery mechanisms improve deployment reliability and re
 * Refactored training logic into reusable functions.
 * Tested multiple deployment scenarios to verify recovery behavior.
 * Improved reliability without introducing additional infrastructure or orchestration tools.
+
+## Technical Debt Identified
+
+During Linux validation, legacy references to
+data/snapshot_history.jsonl were discovered in
+dashboard utilities.
+
+Current monitoring pipeline uses:
+
+logs/snapshot_history.jsonl
+logs/anomaly_events.jsonl
+
+Future cleanup task:
+standardize all components on logs/ storage paths.
