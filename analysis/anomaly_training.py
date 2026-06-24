@@ -53,17 +53,16 @@ def detect_anomalies(model, features, df):
     return df
 
 #Function to save model
-def save_model(model):
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-    MODEL_PATH = os.path.join(BASE_DIR, "models", "anomaly_model.pkl")
+def save_model(model, model_path):
 
-    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
 
-    joblib.dump(model, MODEL_PATH)
-    print("Model saved at:", MODEL_PATH)
+    joblib.dump(model, model_path)
 
+    print("Model saved at:", model_path)
 
-def train_from_history(history_file):
+#Function to train from history
+def train_from_history(history_file, model_path):
 
     # Complete training pipeline:
     # Load history -> Prepare data -> Train model -> Save model
@@ -81,7 +80,7 @@ def train_from_history(history_file):
         df
     )
 
-    save_model(model)
+    save_model(model, model_path)
 
     return model
 
@@ -93,11 +92,20 @@ if __name__ == "__main__":
     )
 
     history_file = os.path.join(
-        BASE_DIR,
-        "logs",
-        "snapshot_history.jsonl"
+    BASE_DIR,
+    "logs",
+    "snapshot_history.jsonl"
     )
 
-    model = train_from_history(history_file)
+    model_path = os.path.join(
+        BASE_DIR,
+        "models",
+        "anomaly_model.pkl"
+    )
+
+    model = train_from_history(
+        history_file,
+        model_path
+    )
 
     print("\n--- Model Training Complete ---")

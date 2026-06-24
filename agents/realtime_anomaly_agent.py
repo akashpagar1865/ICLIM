@@ -104,7 +104,7 @@ def main():
             "Model file missing. Starting bootstrap model training."
         )
 
-        bootstrap_model(HISTORY_FILE)
+        bootstrap_model(HISTORY_FILE, MODEL_PATH)
 
     try:
         model = load_model(MODEL_PATH)

@@ -53,13 +53,13 @@ def model_exists(model_path):
 # ↓
 # Save anomaly_model.pkl
 
-def bootstrap_model(history_file):
+def bootstrap_model(history_file, model_path):
 
     print(
         "\nModel file missing. Training initial model...\n"
     )
 
-    train_from_history(history_file)
+    train_from_history(history_file, model_path)
 
     logger.info(
         "Initial model training completed."
