@@ -64,7 +64,7 @@ def append_snapshot_to_history(snapshot, filename):
 #Main loop — real-time anomaly detection
 def main():
     config = load_config()
-    print("CONFIG LOADED:", config)
+    logger.info(f"Configuration loaded: {config}")
 
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 

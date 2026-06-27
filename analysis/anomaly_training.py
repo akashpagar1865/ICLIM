@@ -3,6 +3,9 @@ from sklearn.ensemble import IsolationForest
 import json
 import joblib
 import os
+from utils.logger import setup_logger
+
+logger = setup_logger()
 
 
 # Historical JSONL data is converted into a
@@ -59,7 +62,7 @@ def save_model(model, model_path):
 
     joblib.dump(model, model_path)
 
-    print("Model saved at:", model_path)
+    logger.info(f"Model saved at: {model_path}")
 
 #Function to train from history
 def train_from_history(history_file, model_path):
@@ -108,4 +111,4 @@ if __name__ == "__main__":
         model_path
     )
 
-    print("\n--- Model Training Complete ---")
+    logger.info("Model Training Complete.")

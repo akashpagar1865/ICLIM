@@ -55,18 +55,12 @@ def model_exists(model_path):
 
 def bootstrap_model(history_file, model_path):
 
-    print(
-        "\nModel file missing. Training initial model...\n"
-    )
+    logger.info("Model file missing. Training initial model.")
 
     train_from_history(history_file, model_path)
 
     logger.info(
         "Initial model training completed."
-    )
-
-    print(
-        "\nInitial model training completed.\n"
     )
 
 
@@ -119,8 +113,6 @@ def bootstrap_history(history_file, hostname, samples=30):
 
     logger.info(f"Bootstrap history generation started. Target samples: {samples}")
 
-    print("\nBootstrap history generation started...\n")
-
     with open(history_file, "w") as f:
 
         for i in range(samples):
@@ -133,10 +125,5 @@ def bootstrap_history(history_file, hostname, samples=30):
                 f"Bootstrap progress: {i + 1}/{samples}"
             )
 
-            print(
-                f"[{i + 1}/{samples}] Snapshot collected"
-            )
 
     logger.info(f"Bootstrap history generation completed. Collected {samples} samples.")
-
-    print("\nBootstrap history completed.\n")
