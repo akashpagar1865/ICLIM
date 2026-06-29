@@ -1,0 +1,14 @@
+services:
+  iclim:
+    build: .
+    image: iclim:v1
+    container_name: iclim-agent
+    volumes:
+      - iclim-logs:/app/logs
+      - iclim-models:/app/models
+    environment:
+      - INTERVAL=5
+
+volumes:
+  iclim-logs:
+  iclim-models:
