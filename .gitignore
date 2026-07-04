@@ -24,3 +24,20 @@ models/*.pkl
 #No need to save logs on repo
 logs/
 *.gz
+
+# Terraform working directory
+terraform/.terraform/
+
+# Terraform state files
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Terraform crash logs
+terraform/crash.log
+
+# Terraform variable files (may contain secrets)
+terraform/*.tfvars
+terraform/*.tfvars.json
+
+# Terraform plan files
+terraform/*.tfplan
