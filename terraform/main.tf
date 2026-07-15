@@ -93,7 +93,7 @@ resource "azurerm_linux_virtual_machine" "iclim_vm" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("C:/Users/Sayali PC/.ssh/iclim_ed25519.pub")
+    public_key = file(var.public_key_path)
   }
 
   os_disk {
