@@ -4,12 +4,14 @@
 # Never copy the local virtual environment.
 # =====================================================
 .venv/
+venv/
 
 # =====================================================
 # Git Metadata
 # Version history is not required inside the image.
 # =====================================================
 .git/
+.github/
 
 # =====================================================
 # VS Code Settings
