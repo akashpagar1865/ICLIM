@@ -24,3 +24,19 @@ jobs:
     - name: Build Docker Image
       run: |
             docker build -t iclim:ci .
+
+    - name: Start Docker Container
+      run: |
+            docker run -d --name iclim-test iclim:ci
+
+    - name: Wait for Startup
+      run: sleep 10
+
+    - name: Show Container Logs
+      run: docker logs iclim-test
+
+    - name: Cleanup
+      if: always()
+      run: |
+            docker stop iclim-test
+            docker rm iclim-test
