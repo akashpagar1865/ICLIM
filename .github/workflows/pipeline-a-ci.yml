@@ -37,7 +37,7 @@ jobs:
 
     - name: Verify Application Startup
       run: |
-            docker logs iclim-test | grep "First snapshot collected"
+            docker logs iclim-test 2>&1 | grep "First snapshot collected"
 
     - name: Cleanup
       if: always()
