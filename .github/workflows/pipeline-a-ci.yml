@@ -30,13 +30,19 @@ jobs:
             docker run -d --name iclim-test iclim:ci
 
     - name: Wait for Startup
-      run: sleep 10
+      run: sleep 60
 
     - name: Show Container Logs
       run: docker logs iclim-test
+
+    - name: Verify Application Startup
+      run: |
+            docker logs iclim-test | grep "First snapshot collected"
 
     - name: Cleanup
       if: always()
       run: |
             docker stop iclim-test
             docker rm iclim-test
+
+    
