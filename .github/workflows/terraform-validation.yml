@@ -1,7 +1,9 @@
 name: Terraform Infrastructure Validation
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - dev
 
 jobs:
   terraform-validation:
