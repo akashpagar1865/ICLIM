@@ -24,6 +24,10 @@ jobs:
       - name: Verify Terraform Installation
         run: terraform version
 
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
       - name: Verify Azure Login
         run: |
           az account show
