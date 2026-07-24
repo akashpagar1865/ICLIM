@@ -36,7 +36,12 @@ jobs:
       - name: Terraform Validate
         working-directory: terraform
         run: terraform validate
-        
+
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -out=tfplan
+
       - name: Verify Azure Login
         run: |
           az account show
