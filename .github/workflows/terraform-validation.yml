@@ -28,6 +28,10 @@ jobs:
         working-directory: terraform
         run: terraform init
 
+      - name: Terraform Format Check
+        working-directory: terraform
+        run: terraform fmt -check
+        
       - name: Verify Azure Login
         run: |
           az account show
