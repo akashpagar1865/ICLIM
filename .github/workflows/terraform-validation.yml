@@ -42,6 +42,12 @@ jobs:
         working-directory: terraform
         run: terraform plan -out=tfplan
 
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: terraform/tfplan
+
       - name: Verify Azure Login
         run: |
           az account show
