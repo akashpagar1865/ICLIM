@@ -34,4 +34,8 @@ jobs:
         id: vm_ip
         working-directory: terraform
         run: |
-            echo "VM_IP=$(terraform output -raw vm_public_ip)" >> $GITHUB_ENV
+          echo "vm_ip=$(terraform output -raw vm_public_ip)" >> "$GITHUB_OUTPUT"
+
+      - name: Display VM Public IP
+        run: |
+          echo "VM Public IP: ${{ steps.vm_ip.outputs.vm_ip }}"
