@@ -1,0 +1,37 @@
+name: Full Validation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  full-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Verify Terraform Installation
+        run: terraform version
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
+
+      - name: Get VM Public IP
+        id: vm_ip
+        working-directory: terraform
+        run: |
+            echo "VM_IP=$(terraform output -raw vm_public_ip)" >> $GITHUB_ENV
