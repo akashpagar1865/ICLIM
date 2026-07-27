@@ -63,3 +63,41 @@ jobs:
 
           echo "SSH never became available."
           exit 1
+
+      - name: Package ICLIM
+        run: |
+          tar -czf iclim.tar.gz \
+            agents \
+            analysis \
+            config \
+            utils \
+            Dockerfile \
+            requirements.txt \
+            README.md
+
+          ls -lh iclim.tar.gz
+
+      - name: Copy Package to VM
+        run: |
+          scp \
+            -i iclim_key \
+            -o StrictHostKeyChecking=no \
+            iclim.tar.gz \
+            azureuser@$VM_IP:~
+
+      - name: Extract Package
+        run: |
+          ssh \
+            -i iclim_key \
+            -o StrictHostKeyChecking=no \
+            azureuser@$VM_IP << 'EOF'
+
+          rm -rf ~/iclim
+
+          mkdir ~/iclim
+
+          tar -xzf ~/iclim.tar.gz -C ~/iclim
+
+          ls -la ~/iclim
+
+          EOF
