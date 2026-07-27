@@ -39,3 +39,26 @@ jobs:
       - name: Display VM Public IP
         run: |
           echo "VM Public IP: ${{ steps.vm_ip.outputs.vm_ip }}"
+
+      - name: Create SSH Key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > iclim_key
+          chmod 600 iclim_key
+
+      - name: Wait for SSH
+        run: |
+          for i in {1..30}; do
+            echo "Attempt $i..."
+
+            ssh \
+              -i iclim_key \
+              -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=5 \
+              azureuser@$VM_IP "echo SSH Ready" && exit 0
+
+            echo "Waiting 10 seconds..."
+            sleep 10
+          done
+
+          echo "SSH never became available."
+          exit 1
