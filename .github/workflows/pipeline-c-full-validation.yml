@@ -101,3 +101,18 @@ jobs:
           ls -la ~/iclim
 
           EOF
+
+      - name: Build Docker Image
+        run: |
+          ssh \
+            -i iclim_key \
+            -o StrictHostKeyChecking=no \
+            azureuser@$VM_IP << 'EOF'
+
+          cd ~/iclim
+
+          docker build -t iclim:latest .
+
+          docker images | grep iclim
+
+          EOF
