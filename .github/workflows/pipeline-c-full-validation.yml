@@ -34,11 +34,11 @@ jobs:
         id: vm_ip
         working-directory: terraform
         run: |
-          echo "vm_ip=$(terraform output -raw vm_public_ip)" >> "$GITHUB_OUTPUT"
+          echo "VM_IP=$(terraform output -raw vm_public_ip)" >> $GITHUB_ENV
 
       - name: Display VM Public IP
         run: |
-          echo "VM Public IP: ${{ steps.vm_ip.outputs.vm_ip }}"
+          echo "VM Public IP: $VM_IP"
 
       - name: Create SSH Key
         run: |
@@ -49,6 +49,7 @@ jobs:
         run: |
           for i in {1..30}; do
             echo "Attempt $i..."
+            echo "Connecting to $VM_IP..."
 
             ssh \
               -i iclim_key \
