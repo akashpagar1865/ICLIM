@@ -134,11 +134,17 @@ jobs:
               --restart unless-stopped \
               iclim:latest
 
+          echo "Waiting 60 seconds for ICLIM to initialize..."
+          sleep 60    
+
           # Verify running container
           echo "=== Running Containers ==="
           sudo docker ps | grep iclim
 
           sudo docker inspect iclim --format='Container Status: {{.State.Status}}'
+
+          #Display Application logs
+          sudo docker exec iclim tail -20 /app/logs/iclim.log
 
           # Display container logs
           echo
