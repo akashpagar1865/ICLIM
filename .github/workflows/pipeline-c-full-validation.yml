@@ -135,13 +135,44 @@ jobs:
               iclim:latest
 
           # Verify running container
+          echo "=== Running Containers ==="
           sudo docker ps | grep iclim
 
           sudo docker inspect iclim --format='Container Status: {{.State.Status}}'
 
           # Display container logs
+          echo
+          echo "=== Container Logs ==="
           sudo docker logs --tail 50 iclim
+
+          echo
+          echo "=== Deployment Status ==="
+
+          if sudo docker ps --format "{{.Names}}" | grep -q "^iclim$"; then
+              echo "Container Status: RUNNING"
+          else
+              echo "Container Status: FAILED"
+              exit 1
+          fi
 
           echo "ICLIM deployment completed successfully."
 
           EOF
+      
+      - name: Destroy Infrastructure
+        working-directory: terraform
+        run: terraform destroy -auto-approve
+
+      - name: Deployment Summary
+        run: |
+          echo "====================================="
+          echo " ICLIM Full Validation Successful"
+          echo "====================================="
+          echo "Terraform Apply      : SUCCESS"
+          echo "SSH Connectivity     : SUCCESS"
+          echo "Application Copy     : SUCCESS"
+          echo "Docker Build         : SUCCESS"
+          echo "Container Started    : SUCCESS"
+          echo "Runtime Validation   : SUCCESS"
+          echo "Terraform Destroy    : SUCCESS"
+          echo "====================================="
