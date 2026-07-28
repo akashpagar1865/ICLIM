@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  full-validation:
+  deploy-and-validate:
     runs-on: ubuntu-latest
 
     steps:
@@ -184,7 +184,7 @@ jobs:
     name: Cleanup Azure Infrastructure
     runs-on: ubuntu-latest
 
-    needs: deploy
+    needs: deploy-and-validate
 
     if: always()
 
