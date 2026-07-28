@@ -144,6 +144,8 @@ jobs:
           sudo docker inspect iclim --format='Container Status: {{.State.Status}}'
 
           #Display Application logs
+          echo
+          echo "=== Application logs ==="
           sudo docker exec iclim tail -20 /app/logs/iclim.log
 
           # Display container logs
