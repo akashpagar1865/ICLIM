@@ -129,7 +129,7 @@ jobs:
           sudo docker images | grep iclim
 
           # Start ICLIM container
-          Sudo docker run -d \
+          sudo docker run -d \
               --name iclim \
               --restart unless-stopped \
               iclim:latest
