@@ -108,7 +108,8 @@ jobs:
           fi
 
           # Verify Docker installation
-          docker --version
+          sudo docker --version
+          sudo systemctl is-active docker
 
           # Prepare deployment directory
           rm -rf ~/iclim
@@ -119,27 +120,27 @@ jobs:
 
           # Build Docker image
           cd ~/iclim
-          docker build -t iclim:latest .
+          sudo docker build -t iclim:latest .
 
           # Remove existing container (if any)
-          docker rm -f iclim || true
+          sudo docker rm -f iclim || true
 
           # Verify image creation
-          docker images | grep iclim
+          sudo docker images | grep iclim
 
           # Start ICLIM container
-          docker run -d \
+          Sudo docker run -d \
               --name iclim \
               --restart unless-stopped \
               iclim:latest
 
           # Verify running container
-          docker ps | grep iclim
+          sudo docker ps | grep iclim
 
-          docker inspect iclim --format='Container Status: {{.State.Status}}'
+          sudo docker inspect iclim --format='Container Status: {{.State.Status}}'
 
           # Display container logs
-          docker logs --tail 50 iclim
+          sudo docker logs --tail 50 iclim
 
           echo "ICLIM deployment completed successfully."
 
