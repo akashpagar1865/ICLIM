@@ -100,9 +100,15 @@ def classify_anomaly(snapshot, anomaly_duration_seconds):
 
 
 #Optional: log anomalies to a file
-def log_anomaly(snapshot, filename):
+def log_anomaly(snapshot, filename, severity, duration_seconds):
+    event = {
+        **snapshot,
+        "severity": severity,
+        "duration_seconds": duration_seconds
+    }
+
     with open(filename, "a") as f:
-        f.write(json.dumps(snapshot) + "\n")
+        f.write(json.dumps(event) + "\n")
 
 #Function to update live snapshot into history
 def append_snapshot_to_history(snapshot, filename):
@@ -213,7 +219,9 @@ def main():
 
                 log_anomaly(
                     snap,
-                    ANOMALY_FILE
+                    ANOMALY_FILE,
+                    severity,
+                    anomaly_duration_seconds
                 )
 
             else:
