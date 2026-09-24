@@ -17,7 +17,8 @@ from agents.metrics_exporter import (
     set_agent_status,
     start_metrics_server,
     monitoring_cycles,
-    model_loaded
+    model_loaded,
+    bootstrap_completed
 )
 
 
@@ -167,9 +168,11 @@ def main():
     try:
         model = load_model(MODEL_PATH)
         model_loaded.set(1)
+        bootstrap_completed.set(1)
         logger.info("Model loaded successfully")
     except Exception as e:
         model_loaded.set(0)
+        bootstrap_completed.set(0)
         logger.error(f"Model loading failed: {str(e)}")
         return
 

@@ -15,6 +15,11 @@ model_loaded = Gauge(
     "Whether the ICLIM anomaly detection model is loaded"
 )
 
+bootstrap_completed = Gauge(
+    "iclim_bootstrap_completed",
+    "Whether ICLIM bootstrap completed successfully"
+)
+
 monitoring_cycles = Counter(
     "iclim_monitoring_cycles_total",
     "Total number of monitoring cycles completed by ICLIM"
