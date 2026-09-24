@@ -1,5 +1,5 @@
 
-from prometheus_client import Gauge, start_http_server
+from prometheus_client import Gauge, Counter, start_http_server
 
 
 agent_status = Gauge(
@@ -7,17 +7,19 @@ agent_status = Gauge(
     "Whether the ICLIM agent is running"
 )
 
+def set_agent_status(value):
+    agent_status.set(value)
 
-def main():
-    agent_status.set(1)
+model_loaded = Gauge(
+    "iclim_model_loaded",
+    "Whether the ICLIM anomaly detection model is loaded"
+)
 
+monitoring_cycles = Counter(
+    "iclim_monitoring_cycles_total",
+    "Total number of monitoring cycles completed by ICLIM"
+)
+
+
+def start_metrics_server():
     start_http_server(8000)
-
-    print("ICLIM metrics exporter started on port 8000")
-
-    while True:
-        pass
-
-
-if __name__ == "__main__":
-    main()

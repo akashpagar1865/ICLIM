@@ -13,6 +13,14 @@ from analysis.bootstrap import (
     bootstrap_history,
     bootstrap_model
 )
+from agents.metrics_exporter import (
+    set_agent_status,
+    start_metrics_server,
+    monitoring_cycles,
+    model_loaded
+)
+
+
 logger = setup_logger()
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -51,6 +59,46 @@ def is_anomaly(model, snapshot):
     pred = model.predict(features)[0]  # 1 = normal, -1 = anomaly
     return pred == -1
 
+# Determine operational resource impact.
+# This is separate from Isolation Forest anomaly detection.
+def get_resource_impact(snapshot):
+
+    values = [
+        snapshot["cpu"],
+        snapshot["mem"],
+        snapshot["disk"]
+    ]
+
+    if any(value >= 90 for value in values):
+        return "high"
+
+    if any(value >= 80 for value in values):
+        return "moderate"
+
+    return "low"
+
+
+# Classify an already-detected anomaly.
+#
+# Severity requires both:
+# 1. Persistence
+# 2. Resource impact
+def classify_anomaly(snapshot, anomaly_duration_seconds):
+
+    impact = get_resource_impact(snapshot)
+
+    if anomaly_duration_seconds < 30:
+        return "info"
+
+    if impact == "high":
+        return "critical"
+
+    if impact == "moderate":
+        return "warning"
+
+    return "info"
+
+
 #Optional: log anomalies to a file
 def log_anomaly(snapshot, filename):
     with open(filename, "a") as f:
@@ -64,6 +112,10 @@ def append_snapshot_to_history(snapshot, filename):
 #Main loop — real-time anomaly detection
 def main():
     config = load_config()
+
+    start_metrics_server()
+    set_agent_status(1)
+
     logger.info(f"Configuration loaded: {config}")
 
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -108,13 +160,17 @@ def main():
 
     try:
         model = load_model(MODEL_PATH)
+        model_loaded.set(1)
         logger.info("Model loaded successfully")
     except Exception as e:
+        model_loaded.set(0)
         logger.error(f"Model loading failed: {str(e)}")
         return
 
     interval = config["app"]["interval"]
     first_run = True
+    consecutive_anomalies = 0
+
     while True:
         try:
             import socket
@@ -124,6 +180,8 @@ def main():
                 HOSTNAME = config["app"]["hostname"]
 
             snap = get_live_snapshot(HOSTNAME)
+
+            monitoring_cycles.inc()
 
             anomaly = is_anomaly(model, snap)
 
@@ -135,14 +193,38 @@ def main():
                 first_run = False
 
             if anomaly:
+                consecutive_anomalies += 1
+
+                anomaly_duration_seconds = consecutive_anomalies * interval
+
+                severity = classify_anomaly(
+                    snap,
+                    anomaly_duration_seconds
+                )
+
                 logger.warning(
-                    f"ANOMALY DETECTED | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
+                    f"ANOMALY DETECTED | "
+                    f"Severity={severity.upper()} | "
+                    f"CPU={snap['cpu']} "
+                    f"MEM={snap['mem']} "
+                    f"DISK={snap['disk']} | "
+                    f"Duration={anomaly_duration_seconds}s"
                 )
-                log_anomaly(snap, ANOMALY_FILE)
+
+                log_anomaly(
+                    snap,
+                    ANOMALY_FILE
+                )
+
             else:
-                logger.info(
-                    f"System Normal | CPU={snap['cpu']} MEM={snap['mem']} DISK={snap['disk']}"
-                )
+               consecutive_anomalies = 0
+
+               logger.info(
+                   f"System Normal | "
+                   f"CPU={snap['cpu']} "
+                   f"MEM={snap['mem']} "
+                   f"DISK={snap['disk']}"
+               )
 
             time.sleep(interval)
 
