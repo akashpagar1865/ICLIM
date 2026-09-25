@@ -18,7 +18,8 @@ from agents.metrics_exporter import (
     start_metrics_server,
     monitoring_cycles,
     model_loaded,
-    bootstrap_completed
+    bootstrap_completed,
+    anomaly_total
 )
 
 

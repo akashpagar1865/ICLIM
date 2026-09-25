@@ -20,6 +20,12 @@ bootstrap_completed = Gauge(
     "Whether ICLIM bootstrap completed successfully"
 )
 
+anomaly_total = Counter(
+    "iclim_anomaly_total",
+    "Total number of ICLIM anomalies by severity",
+    ["severity"]
+)
+
 monitoring_cycles = Counter(
     "iclim_monitoring_cycles_total",
     "Total number of monitoring cycles completed by ICLIM"
