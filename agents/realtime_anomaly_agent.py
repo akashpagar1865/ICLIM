@@ -212,6 +212,8 @@ def main():
                     anomaly_duration_seconds
                 )
 
+                anomaly_total.labels(severity=severity).inc()
+
                 logger.warning(
                     f"ANOMALY DETECTED | "
                     f"Severity={severity.upper()} | "
