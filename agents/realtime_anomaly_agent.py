@@ -90,7 +90,7 @@ def classify_anomaly(snapshot, anomaly_duration_seconds):
     impact = get_resource_impact(snapshot)
 
     if anomaly_duration_seconds < 30:
-        return "info"
+        return "unusual"
 
     if impact == "high":
         return "critical"
@@ -98,7 +98,7 @@ def classify_anomaly(snapshot, anomaly_duration_seconds):
     if impact == "moderate":
         return "warning"
 
-    return "info"
+    return "unusual"
 
 
 #Optional: log anomalies to a file
@@ -248,8 +248,7 @@ def main():
                 anomaly_total.labels(severity=severity).inc()
 
                 logger.warning(
-                    f"ANOMALY DETECTED | "
-                    f"Severity={severity.upper()} | "
+                    f"{severity.upper()} | "
                     f"CPU={snap['cpu']} "
                     f"MEM={snap['mem']} "
                     f"DISK={snap['disk']} | "
