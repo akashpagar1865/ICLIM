@@ -177,12 +177,45 @@ def main():
         logger.error(f"Model loading failed: {str(e)}")
         return
 
+    model_mtime = os.path.getmtime(MODEL_PATH)
+    
     interval = config["app"]["interval"]
     first_run = True
     consecutive_anomalies = 0
 
     while True:
         try:
+
+            current_model_mtime = os.path.getmtime(MODEL_PATH)
+
+            if current_model_mtime != model_mtime:
+
+                logger.info(
+                    "Model file changed. Reloading model."
+                )
+
+                try:
+                    model = load_model(MODEL_PATH)
+                    model_mtime = current_model_mtime
+
+                    consecutive_anomalies = 0
+
+                    model_loaded.set(1)
+
+                    logger.info(
+                        "New model loaded successfully. "
+                        "Anomaly persistence reset."
+                    )
+
+                except Exception as e:
+
+                    model_loaded.set(0)
+
+                    logger.error(
+                        f"New model loading failed: {str(e)}"
+                    )
+
+
             import socket
             if config["app"]["hostname"] == "auto":
                 HOSTNAME = socket.gethostname()
