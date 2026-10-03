@@ -202,7 +202,14 @@ def summarize_log_evidence(log_evidence):
 
     if anomaly_entries:
         summary_parts.append(
-            f"{len(anomaly_entries)} anomaly log entries were recorded."
+            anomaly_count = len(anomaly_entries)
+
+            if anomaly_count == 1:
+                anomaly_text = "1 anomaly log entry was recorded."
+            else:
+                anomaly_text = f"{anomaly_count} anomaly log entries were recorded."
+
+            summary_parts.append(anomaly_text)
         )
 
         # Keep the final anomaly entry as direct evidence.
