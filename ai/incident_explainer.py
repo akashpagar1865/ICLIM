@@ -18,12 +18,26 @@ Analyze the following ICLIM incident context.
 Your job is to explain what happened using ONLY the evidence provided.
 
 Rules:
-- Do not invent a root cause.
-- Do not claim causation unless the evidence explicitly supports it.
+- Use ONLY the evidence provided in the ICLIM incident context.
+- Do not invent a root cause, process, service, deployment, or other fact.
+- Do not claim causation unless the provided evidence explicitly supports it.
 - Clearly distinguish observed evidence from interpretation.
-- Identify what remains unknown.
-- Provide practical investigation guidance.
+- Preserve the ICLIM severity exactly as provided.
+- IMPORTANT: ICLIM severity values are UNUSUAL, WARNING, and CRITICAL.
+- A log line may contain the Python logging level WARNING. Do not confuse
+  that logging level with the ICLIM incident severity.
+- The Prometheus evidence represents a 5-minute observation window.
+- Prometheus values in this context are sampled at 60-second intervals.
+- Do not claim that Prometheus "missed" an event unless the evidence
+  establishes that conclusion. Instead, describe the discrepancy between
+  the ICLIM event and Prometheus observations.
+- Do not describe a resource as "normal" unless the provided evidence
+  establishes a baseline. You may describe a resource as stable,
+  increasing, decreasing, or relatively unchanged when supported by the
+  supplied values.
 - Do not recalculate or change the ICLIM severity.
+- Identify what remains unknown.
+- Provide practical investigation guidance based on the available evidence.
 - Return ONLY valid JSON.
 - Do not wrap the JSON in markdown code fences.
 
