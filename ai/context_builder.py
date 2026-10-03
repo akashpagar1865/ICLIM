@@ -230,6 +230,10 @@ def summarize_log_evidence(log_evidence):
 def build_incident_context(event):
     validate_anomaly_event(event)
 
+    log_evidence = collect_log_evidence(
+        event["timestamp"]
+    )
+
     return {
         "incident": {
             "timestamp": event["timestamp"],
@@ -245,32 +249,11 @@ def build_incident_context(event):
         "prometheus_evidence": collect_prometheus_evidence(
             event["timestamp"]
         ),
-        log_evidence = collect_log_evidence(
-        event["timestamp"]
-        )
-
-        return {
-            "incident": {
-                "timestamp": event["timestamp"],
-                "server": event["server"],
-                "severity": normalize_severity(event["severity"]),
-                "anomaly_duration_seconds": event["duration_seconds"],
-            },
-            "resources": {
-                "cpu_percent": event["cpu"],
-                "memory_percent": event["mem"],
-                "disk_percent": event["disk"],
-            },
-            "prometheus_evidence": collect_prometheus_evidence(
-                event["timestamp"]
-            ),
-            "log_evidence": {
-                "window": log_evidence["window"],
-                "summary": summarize_log_evidence(log_evidence),
-            },
-        }
+        "log_evidence": {
+            "window": log_evidence["window"],
+            "summary": summarize_log_evidence(log_evidence),
+        },
     }
-
 
 def load_anomaly_event(filename):
     path = Path(filename)
