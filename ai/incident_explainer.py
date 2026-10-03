@@ -109,8 +109,29 @@ ICLIM incident context:
         response = self.provider.generate(prompt)
 
         try:
-            return json.loads(response)
+            result = json.loads(response)
         except json.JSONDecodeError as exc:
             raise RuntimeError(
                 "AI provider returned invalid JSON."
             ) from exc
+
+        required_fields = {
+            "incident",
+            "severity",
+            "observed_evidence",
+            "timeline",
+            "explanation",
+            "evidence_strength",
+            "unknowns",
+            "investigation_guidance",
+        }
+
+        missing_fields = required_fields - result.keys()
+
+        if missing_fields:
+            raise RuntimeError(
+                "AI response is missing required fields: "
+                + ", ".join(sorted(missing_fields))
+            )
+
+        return result
