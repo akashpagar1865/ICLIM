@@ -124,6 +124,51 @@ def collect_prometheus_evidence(timestamp):
         "metrics": evidence,
     }
 
+def collect_log_evidence(timestamp):
+    """Collect ICLIM log entries from the 5-minute window before an incident."""
+
+    log_path = Path("logs/iclim.log")
+    incident_time = parse_timestamp(timestamp)
+
+    start_time = incident_time - timedelta(
+        minutes=EVIDENCE_WINDOW_MINUTES
+    )
+
+    if not log_path.exists():
+        return {
+            "error": f"Log file not found: {log_path}"
+        }
+
+    matching_logs = []
+
+    with log_path.open("r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            try:
+                log_timestamp = datetime.strptime(
+                    line[:19],
+                    "%Y-%m-%d %H:%M:%S"
+                )
+            except ValueError:
+                continue
+
+            if start_time <= log_timestamp <= incident_time:
+                matching_logs.append(line)
+
+    return {
+        "window": {
+            "start": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "end": incident_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "duration_minutes": EVIDENCE_WINDOW_MINUTES,
+        },
+        "entries": matching_logs,
+        "count": len(matching_logs),
+    }
+
 
 def build_incident_context(event):
     validate_anomaly_event(event)
@@ -141,6 +186,9 @@ def build_incident_context(event):
             "disk_percent": event["disk"],
         },
         "prometheus_evidence": collect_prometheus_evidence(
+            event["timestamp"]
+        ),
+        "log_evidence": collect_log_evidence(
             event["timestamp"]
         ),
     }
