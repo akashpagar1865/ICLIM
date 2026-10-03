@@ -53,6 +53,14 @@ Rules:
 - anomaly_duration_seconds represents the persistence duration reported
   by ICLIM. Do not construct an exact anomaly start or end timestamp from
   it unless those timestamps are explicitly provided.
+- Keep the "explanation" strictly evidence-based. Do not include possible
+  causes or alternative explanations there unless the supplied evidence
+  directly supports them.
+- If multiple explanations are possible, state the discrepancy or
+  uncertainty in the explanation and place the possible explanations only
+  in "unknowns" or "investigation_guidance".
+- Never state or imply that one data source missed an event when the
+  evidence only shows different measurements at similar timestamps.
 
 Return exactly this structure:
 
