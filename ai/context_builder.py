@@ -170,6 +170,63 @@ def collect_log_evidence(timestamp):
     }
 
 
+def summarize_log_evidence(log_evidence):
+    """Reduce repetitive ICLIM log entries into compact deterministic evidence."""
+
+    entries = log_evidence.get("entries", [])
+
+    if not entries:
+        return {
+            "summary": "No ICLIM log entries found in the evidence window.",
+            "normal_entries": 0,
+            "anomaly_entries": 0,
+        }
+
+    normal_entries = []
+    anomaly_entries = []
+
+    for entry in entries:
+        if "System Normal" in entry:
+            normal_entries.append(entry)
+
+        if " | UNUSUAL | " in entry or " | WARNING | " in entry or " | CRITICAL | " in entry:
+            anomaly_entries.append(entry)
+
+    summary_parts = []
+
+    if normal_entries:
+        summary_parts.append(
+            f"{len(normal_entries)} normal-state log entries were recorded "
+            "before the anomaly."
+        )
+
+    if anomaly_entries:
+        summary_parts.append(
+            f"{len(anomaly_entries)} anomaly log entries were recorded."
+        )
+
+        # Keep the final anomaly entry as direct evidence.
+        summary_parts.append(
+            f"Latest anomaly log: {anomaly_entries[-1]}"
+        )
+
+    if not summary_parts:
+        summary_parts.append(
+            f"{len(entries)} log entries were collected."
+        )
+
+    return {
+        "summary": " ".join(summary_parts),
+        "normal_entries": len(normal_entries),
+        "anomaly_entries": len(anomaly_entries),
+        "latest_anomaly": (
+            anomaly_entries[-1]
+            if anomaly_entries
+            else None
+        ),
+    }
+
+
 def build_incident_context(event):
     validate_anomaly_event(event)
 
@@ -188,9 +245,30 @@ def build_incident_context(event):
         "prometheus_evidence": collect_prometheus_evidence(
             event["timestamp"]
         ),
-        "log_evidence": collect_log_evidence(
-            event["timestamp"]
-        ),
+        log_evidence = collect_log_evidence(
+        event["timestamp"]
+        )
+
+        return {
+            "incident": {
+                "timestamp": event["timestamp"],
+                "server": event["server"],
+                "severity": normalize_severity(event["severity"]),
+                "anomaly_duration_seconds": event["duration_seconds"],
+            },
+            "resources": {
+                "cpu_percent": event["cpu"],
+                "memory_percent": event["mem"],
+                "disk_percent": event["disk"],
+            },
+            "prometheus_evidence": collect_prometheus_evidence(
+                event["timestamp"]
+            ),
+            "log_evidence": {
+                "window": log_evidence["window"],
+                "summary": summarize_log_evidence(log_evidence),
+            },
+        }
     }
 
 
