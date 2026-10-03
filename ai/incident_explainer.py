@@ -61,6 +61,17 @@ Rules:
   in "unknowns" or "investigation_guidance".
 - Never state or imply that one data source missed an event when the
   evidence only shows different measurements at similar timestamps.
+- When ICLIM and Prometheus report different values for the same timestamp,
+  the explanation MUST describe only the measurement discrepancy.
+- In such cases, NEVER use phrases such as "missed by Prometheus",
+  "not captured by Prometheus", "missed the spike", or equivalent wording.
+- Do not attribute the discrepancy to scrape timing, sampling intervals,
+  different sources, or metric calculation unless that fact is explicitly
+  present in the supplied context.
+- For a discrepancy, use wording such as:
+  "ICLIM reported X while Prometheus reported Y at the corresponding
+  timestamp. The available evidence does not establish why the values
+  differ."
 
 Return exactly this structure:
 
