@@ -43,6 +43,7 @@ class GroqProvider(AIProvider):
                     "content": str(context),
                 },
             ],
+            response_format={"type": "json_object"},
         )
 
         return response.choices[0].message.content
