@@ -40,6 +40,19 @@ Rules:
 - Provide practical investigation guidance based on the available evidence.
 - Return ONLY valid JSON.
 - Do not wrap the JSON in markdown code fences.
+- Treat differences between ICLIM event values and Prometheus values as
+  discrepancies unless the context explicitly establishes why they differ.
+- NEVER state that Prometheus missed, failed to capture, or sampled around
+  an event unless the evidence explicitly proves the timing relationship.
+- Do not propose a specific explanation for a metric discrepancy as if it
+  were established fact. If relevant, identify possible explanations as
+  unknowns or investigation items.
+- Do not describe values as moderate, high, low, normal, abnormal, or
+  significant unless the supplied evidence explicitly establishes that
+  characterization.
+- anomaly_duration_seconds represents the persistence duration reported
+  by ICLIM. Do not construct an exact anomaly start or end timestamp from
+  it unless those timestamps are explicitly provided.
 
 Return exactly this structure:
 
