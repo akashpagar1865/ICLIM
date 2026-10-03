@@ -180,6 +180,7 @@ def summarize_log_evidence(log_evidence):
             "summary": "No ICLIM log entries found in the evidence window.",
             "normal_entries": 0,
             "anomaly_entries": 0,
+            "latest_anomaly": None,
         }
 
     normal_entries = []
@@ -189,30 +190,33 @@ def summarize_log_evidence(log_evidence):
         if "System Normal" in entry:
             normal_entries.append(entry)
 
-        if " | UNUSUAL | " in entry or " | WARNING | " in entry or " | CRITICAL | " in entry:
+        if (
+            " | UNUSUAL | " in entry
+            or " | WARNING | " in entry
+            or " | CRITICAL | " in entry
+        ):
             anomaly_entries.append(entry)
 
     summary_parts = []
 
     if normal_entries:
         summary_parts.append(
-            f"{len(normal_entries)} normal-state log entries were recorded "
-            "before the anomaly."
+            f"{len(normal_entries)} normal-state log entries "
+            "were recorded before the anomaly."
         )
 
     if anomaly_entries:
-        summary_parts.append(
-            anomaly_count = len(anomaly_entries)
+        anomaly_count = len(anomaly_entries)
 
-            if anomaly_count == 1:
-                anomaly_text = "1 anomaly log entry was recorded."
-            else:
-                anomaly_text = f"{anomaly_count} anomaly log entries were recorded."
+        if anomaly_count == 1:
+            anomaly_text = "1 anomaly log entry was recorded."
+        else:
+            anomaly_text = (
+                f"{anomaly_count} anomaly log entries were recorded."
+            )
 
-            summary_parts.append(anomaly_text)
-        )
+        summary_parts.append(anomaly_text)
 
-        # Keep the final anomaly entry as direct evidence.
         summary_parts.append(
             f"Latest anomaly log: {anomaly_entries[-1]}"
         )
