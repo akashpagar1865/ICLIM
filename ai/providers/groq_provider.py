@@ -36,6 +36,7 @@ class GroqProvider(AIProvider):
                         "for ICLIM. Analyze only the operational evidence "
                         "provided in the context. Do not invent root causes "
                         "or facts that are not supported by the evidence."
+                        "When requested, return the response as valid JSON."
                     ),
                 },
                 {
