@@ -37,6 +37,13 @@ Rules:
 - Keep the human engineer responsible for investigation and action.
 - Return ONLY valid JSON.
 - Do not wrap the JSON in markdown code fences.
+- Do not describe anomaly_duration_seconds as an evidence window.
+  It represents the persistence duration reported by ICLIM.
+- The Prometheus evidence window is 5 minutes.
+- Distinguish filesystem utilisation (disk_percent) from disk I/O activity.
+  Do not use filesystem utilisation alone as evidence of I/O contention.
+- Do not recommend checking evidence that is not represented in the
+  supplied context as though it has already been observed.
 
 Return exactly this structure:
 
