@@ -63,8 +63,64 @@ Return exactly this structure:
 ICLIM incident context:
 {json.dumps(context, indent=2)}
 """
-
-        response = self.provider.generate(prompt)
+        response_schema = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "iclim_operational_assistant",
+        "strict": True,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "incident": {
+                    "type": "string"
+                },
+                "severity": {
+                    "type": "string",
+                    "enum": ["UNUSUAL", "WARNING", "CRITICAL"]
+                },
+                "investigation_priority": {
+                    "type": "string",
+                    "enum": ["HIGH", "MEDIUM", "LOW"]
+                },
+                "recommended_checks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "evidence_basis": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unknowns": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "human_action_required": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "incident",
+                "severity",
+                "investigation_priority",
+                "recommended_checks",
+                "evidence_basis",
+                "unknowns",
+                "human_action_required"
+            ],
+            "additionalProperties": False
+        }
+    }
+}
+        response = self.provider.generate(
+            prompt,
+            response_format=response_schema,
+        )
 
         try:
             result = json.loads(response)

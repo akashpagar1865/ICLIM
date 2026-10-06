@@ -23,7 +23,7 @@ class GroqProvider(AIProvider):
 
         self.client = Groq(api_key=self.api_key)
 
-    def generate(self, context):
+    def generate(self, context, response_format=None):
         """Generate an AI response from incident context."""
 
         response = self.client.chat.completions.create(
@@ -44,7 +44,7 @@ class GroqProvider(AIProvider):
                     "content": str(context),
                 },
             ],
-            response_format={"type": "json_object"},
+            response_format=response_format or {"type": "json_object"},
         )
 
         return response.choices[0].message.content
