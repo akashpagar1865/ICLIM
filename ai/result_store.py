@@ -1,5 +1,23 @@
 import json
 from pathlib import Path
+from agents.metrics_exporter import (
+    set_ai_result_available,
+    set_ai_incident_severity,
+    set_ai_investigation_priority,
+)
+
+def update_ai_metrics(record):
+    """Update Prometheus metrics from the latest AI incident result."""
+
+    set_ai_result_available(1)
+
+    set_ai_incident_severity(
+        record["severity"]
+    )
+
+    set_ai_investigation_priority(
+        record["operational_assistant"]["investigation_priority"]
+    )
 
 
 DEFAULT_OUTPUT = Path("logs/ai_incidents.jsonl")
@@ -28,5 +46,7 @@ def save_ai_incident(
 
     with output_path.open("a", encoding="utf-8") as file:
         file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    update_ai_metrics(record)
 
     return record
