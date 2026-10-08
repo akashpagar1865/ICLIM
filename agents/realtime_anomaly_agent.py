@@ -19,7 +19,8 @@ from agents.metrics_exporter import (
     monitoring_cycles,
     model_loaded,
     bootstrap_completed,
-    anomaly_total
+    anomaly_total,
+    refresh_ai_metrics
 )
 
 
@@ -225,6 +226,8 @@ def main():
             snap = get_live_snapshot(HOSTNAME)
 
             monitoring_cycles.inc()
+            
+            refresh_ai_metrics()
 
             anomaly = is_anomaly(model, snap)
 

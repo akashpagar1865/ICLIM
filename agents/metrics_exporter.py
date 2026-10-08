@@ -1,6 +1,6 @@
-
+import json
+from pathlib import Path
 from prometheus_client import Gauge, Counter, start_http_server
-
 
 agent_status = Gauge(
     "iclim_agent_status",
@@ -48,6 +48,44 @@ ai_investigation_priority = Gauge(
     "Latest AI investigation priority",
     ["priority"]
 )
+
+def refresh_ai_metrics(filename="logs/ai_incidents.jsonl"):
+    """Refresh AI Prometheus metrics from the latest persisted result."""
+
+    try:
+        path = Path(filename)
+
+        if not path.exists():
+            set_ai_result_available(0)
+            ai_incident_severity.clear()
+            ai_investigation_priority.clear()
+            return
+
+        with path.open("r", encoding="utf-8") as file:
+            lines = [line.strip() for line in file if line.strip()]
+
+        if not lines:
+            set_ai_result_available(0)
+            ai_incident_severity.clear()
+            ai_investigation_priority.clear()
+            return
+
+        record = json.loads(lines[-1])
+
+        set_ai_result_available(1)
+
+        set_ai_incident_severity(
+            record["severity"]
+        )
+
+        set_ai_investigation_priority(
+            record["operational_assistant"]["investigation_priority"]
+        )
+
+    except (OSError, json.JSONDecodeError, KeyError):
+        set_ai_result_available(0)
+        ai_incident_severity.clear()
+        ai_investigation_priority.clear()
 
 
 def set_ai_result_available(value):
