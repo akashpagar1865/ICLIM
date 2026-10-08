@@ -49,6 +49,11 @@ Rules:
 - Keep unknowns to 2-4 concise items.
 - Keep each item to one sentence.
 - Do not provide explanations outside the requested JSON fields.
+- Never use causal language such as "caused", "triggered", or "responsible"
+  unless the supplied evidence explicitly establishes causation.
+- Describe unknowns in terms of what has not yet been identified.
+- Human action must be limited to investigation and evidence gathering.
+- Do not ask the engineer to determine or perform remediation.
 
 Return exactly this structure:
 
