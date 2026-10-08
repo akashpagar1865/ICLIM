@@ -4,6 +4,8 @@ from pathlib import Path
 
 DEFAULT_OUTPUT = Path("logs/ai_incidents.jsonl")
 
+LATEST_AI_FILE = Path("logs/latest_ai.json")
+
 
 def save_ai_incident(
     context,
@@ -28,5 +30,8 @@ def save_ai_incident(
 
     with output_path.open("a", encoding="utf-8") as file:
         file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    with LATEST_AI_FILE.open("w", encoding="utf-8") as file:
+        json.dump(record, file, ensure_ascii=False, indent=2)
 
     return record
