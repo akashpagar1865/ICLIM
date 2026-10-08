@@ -45,6 +45,7 @@ class GroqProvider(AIProvider):
                 },
             ],
             response_format=response_format or {"type": "json_object"},
+            max_completion_tokens=2048,
         )
 
         return response.choices[0].message.content

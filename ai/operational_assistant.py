@@ -44,6 +44,11 @@ Rules:
   Do not use filesystem utilisation alone as evidence of I/O contention.
 - Do not recommend checking evidence that is not represented in the
   supplied context as though it has already been observed.
+- Keep recommended_checks to 3-5 concise items.
+- Keep evidence_basis to 2-4 concise items.
+- Keep unknowns to 2-4 concise items.
+- Keep each item to one sentence.
+- Do not provide explanations outside the requested JSON fields.
 
 Return exactly this structure:
 
