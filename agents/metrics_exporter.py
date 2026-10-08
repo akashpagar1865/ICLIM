@@ -32,5 +32,36 @@ monitoring_cycles = Counter(
 )
 
 
+ai_result_available = Gauge(
+    "iclim_ai_result_available",
+    "Whether an AI result is available for the latest incident"
+)
+
+ai_incident_severity = Gauge(
+    "iclim_ai_incident_severity",
+    "Latest ICLIM AI incident severity",
+    ["severity"]
+)
+
+ai_investigation_priority = Gauge(
+    "iclim_ai_investigation_priority",
+    "Latest AI investigation priority",
+    ["priority"]
+)
+
+
+def set_ai_result_available(value):
+    ai_result_available.set(value)
+
+
+def set_ai_incident_severity(severity):
+    ai_incident_severity.clear()
+    ai_incident_severity.labels(severity=severity).set(1)
+
+
+def set_ai_investigation_priority(priority):
+    ai_investigation_priority.clear()
+    ai_investigation_priority.labels(priority=priority).set(1)
+
 def start_metrics_server():
     start_http_server(8000)
