@@ -129,9 +129,28 @@ ICLIM incident context:
         missing_fields = required_fields - result.keys()
 
         if missing_fields:
-            raise RuntimeError(
-                "AI response is missing required fields: "
-                + ", ".join(sorted(missing_fields))
-            )
+          retry_prompt = (
+              prompt
+              + "\n\nIMPORTANT: Your previous response was incomplete. "
+              "It was missing these required fields: "
+              + ", ".join(sorted(missing_fields))
+              + ". Return ALL required fields now. "
+              "Do not omit any field, even if the value is an empty list."
+          )
+
+          response = self.provider.generate(retry_prompt)
+
+          try:
+              result = json.loads(response)
+          except json.JSONDecodeError as exc:
+              raise RuntimeError("AI provider returned invalid JSON on retry.") from exc
+
+          missing_fields = required_fields - result.keys()
+
+          if missing_fields:
+              raise RuntimeError(
+                  "AI response is missing required fields after retry: "
+                  + ", ".join(sorted(missing_fields))
+              )
 
         return result
