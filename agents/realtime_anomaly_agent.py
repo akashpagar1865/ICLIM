@@ -179,7 +179,7 @@ def main():
         return
 
     model_mtime = os.path.getmtime(MODEL_PATH)
-    
+
     interval = config["app"]["interval"]
     first_run = True
     consecutive_anomalies = 0
@@ -226,7 +226,7 @@ def main():
             snap = get_live_snapshot(HOSTNAME)
 
             monitoring_cycles.inc()
-            
+
             refresh_ai_metrics()
 
             anomaly = is_anomaly(model, snap)
@@ -283,7 +283,7 @@ def main():
 
         except Exception as e:
             logger.error(f"Error in main loop: {str(e)}")
-        
+
 
 if __name__ == "__main__":
     main()
