@@ -1,6 +1,20 @@
 import logging
 import os
 
+class ICLIMFormatter(logging.Formatter):
+
+    def format(self, record):
+        original_level = record.levelname
+
+        if record.levelno == logging.INFO:
+            record.levelname = "SYSTEM"
+
+        message = super().format(record)
+
+        record.levelname = original_level
+
+        return message
+
 def setup_logger():
     log_dir = "logs"
     log_file = "iclim.log"
@@ -18,7 +32,7 @@ def setup_logger():
         file_handler = logging.FileHandler(log_path)
         console_handler = logging.StreamHandler()
 
-        formatter = logging.Formatter(
+        formatter = ICLIMFormatter(
             "%(asctime)s | %(levelname)s | %(message)s"
         )
 

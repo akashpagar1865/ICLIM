@@ -1,0 +1,156 @@
+import json
+
+from ai.providers.groq_provider import GroqProvider
+
+
+class IncidentExplainer:
+    """Generate a structured explanation for an ICLIM incident."""
+
+    def __init__(self, provider=None):
+        self.provider = provider or GroqProvider()
+
+    def explain(self, context):
+        """Generate and parse an incident explanation."""
+
+        prompt = f"""
+Analyze the following ICLIM incident context.
+
+Your job is to explain what happened using ONLY the evidence provided.
+
+Rules:
+- Use ONLY the evidence provided in the ICLIM incident context.
+- Do not invent a root cause, process, service, deployment, or other fact.
+- Do not claim causation unless the provided evidence explicitly supports it.
+- Clearly distinguish observed evidence from interpretation.
+- Preserve the ICLIM severity exactly as provided.
+- IMPORTANT: ICLIM severity values are UNUSUAL, WARNING, and CRITICAL.
+- A log line may contain the Python logging level WARNING. Do not confuse
+  that logging level with the ICLIM incident severity.
+- The Prometheus evidence represents a 5-minute observation window.
+- Prometheus values in this context are sampled at 60-second intervals.
+- Do not claim that Prometheus "missed" an event unless the evidence
+  establishes that conclusion. Instead, describe the discrepancy between
+  the ICLIM event and Prometheus observations.
+- Do not describe a resource as "normal" unless the provided evidence
+  establishes a baseline. You may describe a resource as stable,
+  increasing, decreasing, or relatively unchanged when supported by the
+  supplied values.
+- Do not recalculate or change the ICLIM severity.
+- Identify what remains unknown.
+- Provide practical investigation guidance based on the available evidence.
+- Return ONLY valid JSON.
+- Do not wrap the JSON in markdown code fences.
+- Treat differences between ICLIM event values and Prometheus values as
+  discrepancies unless the context explicitly establishes why they differ.
+- NEVER state that Prometheus missed, failed to capture, or sampled around
+  an event unless the evidence explicitly proves the timing relationship.
+- Do not propose a specific explanation for a metric discrepancy as if it
+  were established fact. If relevant, identify possible explanations as
+  unknowns or investigation items.
+- Do not describe values as moderate, high, low, normal, abnormal, or
+  significant unless the supplied evidence explicitly establishes that
+  characterization.
+- anomaly_duration_seconds represents the persistence duration reported
+  by ICLIM. Do not construct an exact anomaly start or end timestamp from
+  it unless those timestamps are explicitly provided.
+- Keep the "explanation" strictly evidence-based. Do not include possible
+  causes or alternative explanations there unless the supplied evidence
+  directly supports them.
+- If multiple explanations are possible, state the discrepancy or
+  uncertainty in the explanation and place the possible explanations only
+  in "unknowns" or "investigation_guidance".
+- Never state or imply that one data source missed an event when the
+  evidence only shows different measurements at similar timestamps.
+- When ICLIM and Prometheus report different values for the same timestamp,
+  the explanation MUST describe only the measurement discrepancy.
+- In such cases, NEVER use phrases such as "missed by Prometheus",
+  "not captured by Prometheus", "missed the spike", or equivalent wording.
+- Do not attribute the discrepancy to scrape timing, sampling intervals,
+  different sources, or metric calculation unless that fact is explicitly
+  present in the supplied context.
+- For a discrepancy, use wording such as:
+  "ICLIM reported X while Prometheus reported Y at the corresponding
+  timestamp. The available evidence does not establish why the values
+  differ."
+
+Return exactly this structure:
+
+{{
+  "incident": "...",
+  "severity": "...",
+  "observed_evidence": [
+    "...",
+    "..."
+  ],
+  "timeline": [
+    "...",
+    "..."
+  ],
+  "explanation": "...",
+  "evidence_strength": {{
+    "level": "HIGH|MEDIUM|LOW",
+    "reason": "..."
+  }},
+  "unknowns": [
+    "...",
+    "..."
+  ],
+  "investigation_guidance": [
+    "...",
+    "..."
+  ]
+}}
+
+ICLIM incident context:
+
+{json.dumps(context, indent=2)}
+"""
+
+        response = self.provider.generate(prompt)
+
+        try:
+            result = json.loads(response)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(
+                "AI provider returned invalid JSON."
+            ) from exc
+
+        required_fields = {
+            "incident",
+            "severity",
+            "observed_evidence",
+            "timeline",
+            "explanation",
+            "evidence_strength",
+            "unknowns",
+            "investigation_guidance",
+        }
+
+        missing_fields = required_fields - result.keys()
+
+        if missing_fields:
+          retry_prompt = (
+              prompt
+              + "\n\nIMPORTANT: Your previous response was incomplete. "
+              "It was missing these required fields: "
+              + ", ".join(sorted(missing_fields))
+              + ". Return ALL required fields now. "
+              "Do not omit any field, even if the value is an empty list."
+          )
+
+          response = self.provider.generate(retry_prompt)
+
+          try:
+              result = json.loads(response)
+          except json.JSONDecodeError as exc:
+              raise RuntimeError("AI provider returned invalid JSON on retry.") from exc
+
+          missing_fields = required_fields - result.keys()
+
+          if missing_fields:
+              raise RuntimeError(
+                  "AI response is missing required fields after retry: "
+                  + ", ".join(sorted(missing_fields))
+              )
+
+        return result
