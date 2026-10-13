@@ -73,8 +73,14 @@ def validate_model(model, features):
     anomaly_count = (predictions == -1).sum()
     anomaly_rate = anomaly_count / len(predictions)
 
-    lower_bound = CONTAMINATION - ANOMALY_RATE_TOLERANCE
-    upper_bound = CONTAMINATION + ANOMALY_RATE_TOLERANCE
+    # With few samples the anomaly rate can only move in steps of 1/n
+    # (e.g. 30 samples -> 3.33%, 6.67%), so exactly 5% may be impossible.
+    # Allow one sample of rounding on top of the normal tolerance.
+    # For large histories this extra allowance is negligible.
+    rounding_allowance = 1 / len(predictions)
+
+    lower_bound = CONTAMINATION - ANOMALY_RATE_TOLERANCE - rounding_allowance
+    upper_bound = CONTAMINATION + ANOMALY_RATE_TOLERANCE + rounding_allowance
 
     logger.info(
         f"Candidate model anomaly rate: "
