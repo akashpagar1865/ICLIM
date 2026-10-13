@@ -23,3 +23,6 @@ scikit-learn==1.4.2
 
 # Observability
 prometheus-client==0.22.1
+
+# AI layer (LLM provider)
+groq==1.7.0

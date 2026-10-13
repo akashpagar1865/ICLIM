@@ -1,0 +1,14 @@
+# Serves the latest AI result as JSON on :8001/ai/latest (read by Grafana Infinity).
+[Unit]
+Description=ICLIM AI Result API
+After=network.target
+
+[Service]
+User=akashp
+WorkingDirectory=/home/akashp/projects/ICLIM
+ExecStart=/home/akashp/projects/ICLIM/venv/bin/python -m ai.result_api
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

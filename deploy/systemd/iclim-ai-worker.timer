@@ -1,0 +1,11 @@
+# First run 2 minutes after boot, then every 5 minutes after the last run.
+[Unit]
+Description=Run ICLIM AI Incident Analysis Every Five Minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=iclim-ai-worker.service
+
+[Install]
+WantedBy=timers.target

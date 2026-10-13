@@ -1,0 +1,11 @@
+# Daily retrain at 03:00. Persistent=true runs a missed job at next boot.
+[Unit]
+Description=Daily ICLIM Anomaly Model Refresh
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+Unit=iclim-model-refresh.service
+
+[Install]
+WantedBy=timers.target

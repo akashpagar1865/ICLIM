@@ -1,0 +1,14 @@
+# Retrains the Isolation Forest model from snapshot history.
+# Oneshot: started by iclim-model-refresh.timer, not enabled directly.
+[Unit]
+Description=ICLIM Anomaly Model Refresh
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=akashp
+WorkingDirectory=/home/akashp/projects/ICLIM
+ExecStart=/home/akashp/projects/ICLIM/venv/bin/python -m analysis.anomaly_training
+
+[Install]
+WantedBy=multi-user.target

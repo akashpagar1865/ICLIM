@@ -1,0 +1,11 @@
+# Install to /etc/logrotate.d/iclim-app
+# Application log: rotate daily, keep 7 compressed copies.
+# copytruncate: the agent keeps its file handle open, so copy-then-truncate instead of move.
+/home/akashp/projects/ICLIM/logs/*.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    copytruncate
+}

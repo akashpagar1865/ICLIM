@@ -1,0 +1,15 @@
+# ICLIM realtime anomaly agent + Prometheus exporter (:8000)
+# Install: sudo cp deploy/systemd/iclim.service /etc/systemd/system/
+[Unit]
+Description=ICLIM Realtime Anomaly Agent
+After=network.target
+
+[Service]
+User=akashp
+WorkingDirectory=/home/akashp/projects/ICLIM
+ExecStart=/home/akashp/projects/ICLIM/venv/bin/python -m agents.realtime_anomaly_agent
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+# Install to /etc/logrotate.d/iclim-data
+# JSONL data files (snapshot history, anomaly events, AI incidents): rotate at 10 MB, keep 5.
+# NOTE: this also bounds the model's training data — retraining reads only the current
+# snapshot_history.jsonl, so after a rotation the next retrain sees only recent samples.
+/home/akashp/projects/ICLIM/logs/*.jsonl {
+    size 10M
+    rotate 5
+    compress
+    missingok
+    copytruncate
+}

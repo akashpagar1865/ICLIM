@@ -1,0 +1,28 @@
+# Install to /opt/prometheus/prometheus.yml
+# Same scrape setup as the CentOS Stream 9 runtime VM (comments tidied, settings unchanged).
+global:
+  scrape_interval: 15s      # how often Prometheus pulls /metrics from each target
+  evaluation_interval: 15s  # how often rules would be evaluated (no rules configured yet)
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093   # not deployed — see docs/security.md and docs/decisions.md
+
+rule_files: []
+
+scrape_configs:
+  - job_name: "prometheus"          # Prometheus monitoring itself
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          app: "prometheus"
+
+  - job_name: "iclim"               # ICLIM application metrics (agents/metrics_exporter.py)
+    static_configs:
+      - targets: ["localhost:8000"]
+
+  - job_name: "node_exporter"       # Linux host metrics
+    static_configs:
+      - targets: ["localhost:9100"]

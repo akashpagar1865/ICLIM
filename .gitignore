@@ -61,3 +61,8 @@ iclim_ed25519.pub
 # But track the repository copy. We need terraform to use this for authentication on azure.
 # And also make it platform independent.
 !terraform/keys/iclim_ed25519.pub
+# Deployment assets that must be tracked despite the *.json / *.txt rules above
+!deploy/grafana/dashboards/*.json
+
+# Local VM inventory output (may contain host details)
+system_inventory.txt

@@ -1,0 +1,12 @@
+# Generates AI explanation + recommendations for the latest anomaly event.
+# Oneshot: started by iclim-ai-worker.timer. Needs GROQ_API_KEY from the env file.
+[Unit]
+Description=ICLIM AI Incident Analysis Worker
+After=network.target
+
+[Service]
+Type=oneshot
+User=akashp
+WorkingDirectory=/home/akashp/projects/ICLIM
+EnvironmentFile=/etc/iclim-ai-worker.env
+ExecStart=/home/akashp/projects/ICLIM/venv/bin/python -m ai.ai_worker

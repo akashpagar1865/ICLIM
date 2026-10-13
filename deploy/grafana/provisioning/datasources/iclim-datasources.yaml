@@ -1,0 +1,22 @@
+# Grafana data source provisioning for ICLIM.
+# Copy to /etc/grafana/provisioning/datasources/ and restart grafana-server.
+#
+# The UIDs below MUST match the UIDs referenced in deploy/grafana/dashboards/iclim-dashboard.json,
+# otherwise the imported dashboard panels will show "data source not found".
+# Infinity requires the plugin first:  sudo grafana cli plugins install yesoreyeram-infinity-datasource
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: dfzwzcawaxnnkc
+    access: proxy
+    url: http://localhost:9090
+    isDefault: true
+    editable: true
+
+  - name: Infinity
+    type: yesoreyeram-infinity-datasource
+    uid: fg0lpomgtadj4d
+    access: proxy
+    editable: true
