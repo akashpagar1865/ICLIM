@@ -138,6 +138,6 @@ This is a single-node, production-*inspired* portfolio project, not a hardened p
 
 ## Author
 
-**Akash Pagar**: moving into cloud, DevOps and SRE engineering after 6+ years in operations.
+**Akash Pagar**: moving into cloud, DevOps and SRE engineering after 4+ years in operations.
 
 [LinkedIn](https://www.linkedin.com/in/akash-pagar-23316816b/) · [GitHub](https://github.com/akashpagar1865)
