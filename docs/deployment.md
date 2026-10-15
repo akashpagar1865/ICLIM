@@ -257,11 +257,16 @@ GitHub → **Actions** → **Full Validation** → **Run workflow**. Pipeline B 
 
 ### Run Terraform from your own machine (optional)
 
-```bash
+SSH to the VM is only allowed from one IP address, so pass yours in (PowerShell):
+
+```powershell
 az login
 cd terraform
+$ip = Invoke-RestMethod https://api.ipify.org
 terraform init
-terraform plan
-terraform apply      # creates billable resources
-terraform destroy    # always clean up afterwards
+terraform plan    -var="allowed_ssh_cidr=$ip/32"
+terraform apply   -var="allowed_ssh_cidr=$ip/32"   # creates billable resources
+terraform destroy -var="allowed_ssh_cidr=$ip/32"   # always clean up afterwards
 ```
+
+In the pipelines this happens automatically: a step detects the GitHub runner's public IP and sets `TF_VAR_allowed_ssh_cidr`.

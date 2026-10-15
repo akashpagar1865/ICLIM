@@ -28,6 +28,27 @@ COPY utils ./utils
 COPY config ./config
 
 # =====================================================
+# Run as a non-root user
+# Create a dedicated system user and give it the app folder,
+# including logs/ and models/ so Docker volumes start out
+# owned by this user.
+# =====================================================
+RUN useradd --system --uid 10001 --user-group --no-create-home iclim \
+    && mkdir -p /app/logs /app/models \
+    && chown -R iclim:iclim /app
+
+USER iclim
+
+# =====================================================
+# Clean shutdown
+# `docker stop` sends this signal. The agent already exits
+# cleanly on Ctrl+C (SIGINT), so use it instead of SIGTERM,
+# which Python ignores when it is the container's main process
+# (that is what caused exit code 137).
+# =====================================================
+STOPSIGNAL SIGINT
+
+# =====================================================
 # Default Startup Command
 # Launch the realtime monitoring agent.
 # =====================================================

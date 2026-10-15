@@ -21,6 +21,13 @@ jobs:
 
       - name: Verify Terraform Installation
         run: terraform version
+ 
+      - name: Allow SSH Only From This Runner
+        run: |
+          IP=$(curl -fsS https://api.ipify.org || curl -fsS https://ifconfig.me)
+          if [ -z "$IP" ]; then echo "Could not detect runner IP"; exit 1; fi
+          echo "Runner public IP: $IP"
+          echo "TF_VAR_allowed_ssh_cidr=$IP/32" >> $GITHUB_ENV
 
       - name: Terraform Init
         working-directory: terraform
@@ -203,6 +210,13 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Allow SSH Only From This Runner
+        run: |
+          IP=$(curl -fsS https://api.ipify.org || curl -fsS https://ifconfig.me)
+          if [ -z "$IP" ]; then echo "Could not detect runner IP"; exit 1; fi
+          echo "Runner public IP: $IP"
+          echo "TF_VAR_allowed_ssh_cidr=$IP/32" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
