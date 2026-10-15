@@ -280,7 +280,58 @@ def load_anomaly_event(filename):
     if not lines:
         raise ValueError("Anomaly event file is empty.")
 
-    return json.loads(lines[-1])
+    # Only recent lines matter: an incident is the latest group of events.
+    events = []
+    for line in lines[-500:]:
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+
+    if not events:
+        raise ValueError("Anomaly event file has no valid events.")
+
+    return select_incident_event(events)
+
+
+SEVERITY_RANK = {"unusual": 1, "warning": 2, "critical": 3}
+
+# Anomaly events closer together than this belong to the same incident.
+INCIDENT_GAP_SECONDS = 60
+
+
+def select_incident_event(events, gap_seconds=INCIDENT_GAP_SECONDS):
+    """Return the most serious event of the latest incident.
+
+    One real incident produces many anomaly events (one per monitoring
+    cycle) whose severity escalates, e.g. UNUSUAL -> CRITICAL, and may end
+    with a short UNUSUAL blip. Explaining only the very last event would
+    understate the incident, so:
+
+    1. Walk back from the newest event while the gap between neighbouring
+       events is at most `gap_seconds`: that group is the latest incident.
+    2. Pick its most severe event; on a tie, the most recent one.
+    """
+    incident = [events[-1]]
+
+    for event in reversed(events[:-1]):
+        gap = (
+            parse_timestamp(incident[-1]["timestamp"])
+            - parse_timestamp(event["timestamp"])
+        ).total_seconds()
+
+        if gap > gap_seconds:
+            break
+
+        incident.append(event)
+
+    return max(
+        incident,
+        key=lambda event: (
+            SEVERITY_RANK.get(str(event.get("severity", "")).lower(), 0),
+            event["timestamp"],
+        ),
+    )
 
 
 if __name__ == "__main__":

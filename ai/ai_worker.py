@@ -1,4 +1,5 @@
 import json
+import os
 
 from ai.context_builder import (
     load_anomaly_event,
@@ -11,6 +12,12 @@ from ai.result_store import save_ai_incident
 
 ANOMALY_FILE = "logs/anomaly_events.jsonl"
 AI_RESULT_FILE = "logs/ai_incidents.jsonl"
+
+# Only incidents at or above this severity are sent to the LLM.
+# Brief UNUSUAL blips are common; explaining each one wastes the
+# provider's daily token quota (Groq free tier: 200k tokens/day).
+SEVERITY_RANK = {"unusual": 1, "warning": 2, "critical": 3}
+AI_MIN_SEVERITY = os.getenv("AI_MIN_SEVERITY", "warning").lower()
 
 
 def load_latest_ai_timestamp():
@@ -32,6 +39,15 @@ def main():
 
     if not event:
         print("No anomaly event available.")
+        return
+
+    severity = str(event.get("severity", "")).lower()
+
+    if SEVERITY_RANK.get(severity, 0) < SEVERITY_RANK.get(AI_MIN_SEVERITY, 2):
+        print(
+            f"Latest incident is {severity.upper()} "
+            f"(below {AI_MIN_SEVERITY.upper()}); no AI analysis needed."
+        )
         return
 
     context = build_incident_context(event)
