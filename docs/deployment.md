@@ -188,21 +188,16 @@ journalctl --list-boots
 ### A11. End-to-end check (also the demo)
 
 ```bash
-# 1. Generate 75 seconds of CPU load (one loop per CPU: 2 loops on a 2-vCPU VM).
-#    75 s, not 40 s: under full load each agent cycle is slower, and CRITICAL
-#    needs 6 anomalous readings in a row (30 s of persistence).
-timeout 75s python3 -c "while True: pass" &
-timeout 75s python3 -c "while True: pass" &
-
-# 2. Watch severity escalate: UNUSUAL (<30s) → CRITICAL (≥30s with CPU ≥ 90%)
-journalctl -u iclim -f            # Ctrl+C when done
-
-# 3. Run the AI worker now instead of waiting for the timer
-sudo systemctl start iclim-ai-worker.service
-curl -fsS localhost:8001/ai/latest | python3 -m json.tool | head -40
+cd ~/projects/ICLIM
+bash scripts/run_demo.sh --check   # every service active / ready
+bash scripts/run_demo.sh           # full run, about 3 minutes
 ```
 
+The script loads every CPU to ~100% for 120 s at the lowest priority (so the agent is not starved), shows the log escalate from UNUSUAL to CRITICAL, runs the AI worker immediately and prints its answer. See [demo.md](demo.md) for the full guide.
+
 Then check the Grafana **ICLIM Agent Metrics** and **AI Analysis** rows.
+
+> **Keep the runtime VM on one branch.** On the VM, stay on `main` and only run `git pull`. Do branch switching on your development machine. Switching the VM to an old local branch can silently overwrite or delete ignored runtime files (`models/`, `logs/snapshot_history.jsonl`) if an old commit ever tracked them; this happened once (see Troubleshooting).
 
 ### Troubleshooting
 
@@ -214,6 +209,8 @@ Then check the Grafana **ICLIM Agent Metrics** and **AI Analysis** rows.
 | AI worker: `Anomaly file not found` | No anomaly has happened yet. Run the load test in A11 |
 | Grafana fails to start (timeout) | Confirm the `timeout.conf` override is installed, then run `systemctl daemon-reload` |
 | Prometheus target `iclim` is `down` | Is `iclim.service` running? `curl localhost:8000/metrics` |
+| Log repeats `No such file or directory: .../models/anomaly_model.pkl` (Grafana may still show "Loaded") | The model file was deleted, e.g. by a git branch switch on the VM. If `logs/snapshot_history.jsonl` has fewer than 20 lines, move it aside (`mv logs/snapshot_history.jsonl logs/snapshot_history.jsonl.old`), then `mkdir -p models && sudo systemctl restart iclim`: the agent re-runs bootstrap (30 samples, then trains). After about an hour, `sudo systemctl start iclim-model-refresh.service` to retrain on real data |
+| Demo stays UNUSUAL, with long gaps between log lines | The load is starving the agent. `run_demo.sh` runs the load with `nice -n 19`; for a manual test, do the same |
 
 ---
 

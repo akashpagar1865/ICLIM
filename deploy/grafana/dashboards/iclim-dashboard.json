@@ -5,8 +5,8 @@
     "name": "ad6z7kg",
     "namespace": "default",
     "uid": "dd44d328-c6f3-4d43-ac67-802737f93fcc",
-    "resourceVersion": "1791522148130008",
-    "generation": 34,
+    "resourceVersion": "1792155211995010",
+    "generation": 41,
     "creationTimestamp": "2026-10-01T13:16:25Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2467002160766976"
@@ -15,7 +15,7 @@
       "grafana.app/createdBy": "user:bfzsm23jqsrgga",
       "grafana.app/saved-from-ui": "Grafana v13.2.2 (1bea008f7e)",
       "grafana.app/updatedBy": "user:bfzsm23jqsrgga",
-      "grafana.app/updatedTimestamp": "2026-10-09T05:02:28Z"
+      "grafana.app/updatedTimestamp": "2026-10-16T12:53:31Z"
     }
   },
   "spec": {
@@ -66,7 +66,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "100 * (1 - avg by (instance) (\r\n  rate(node_cpu_seconds_total{mode=\"idle\"}[5m])\r\n))",
+                        "expr": "100 * (1 - avg by (instance) (\r\n  rate(node_cpu_seconds_total{mode=\"idle\"}[1m])\r\n))",
                         "legendFormat": "__auto",
                         "range": true
                       }
@@ -375,9 +375,11 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "last_over_time(iclim_ai_incident_severity[5m])",
+                        "exemplar": false,
+                        "expr": "iclim_ai_incident_severity == 1",
+                        "instant": true,
                         "legendFormat": "{{severity}}",
-                        "range": true
+                        "range": false
                       }
                     },
                     "refId": "A",
@@ -459,9 +461,11 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "last_over_time(iclim_ai_investigation_priority[5m])",
+                        "exemplar": false,
+                        "expr": "iclim_ai_investigation_priority == 1",
+                        "instant": true,
                         "legendFormat": "{{priority}}",
-                        "range": true
+                        "range": false
                       }
                     },
                     "refId": "A",
@@ -1499,7 +1503,7 @@
                       },
                       "spec": {
                         "editorMode": "code",
-                        "expr": "increase(iclim_anomaly_total{severity=\"warning\"}[5m])   ",
+                        "expr": "increase(iclim_anomaly_total{severity=\"warning\"}[5m]) or vector(0)",
                         "legendFormat": "__auto",
                         "range": true
                       }
