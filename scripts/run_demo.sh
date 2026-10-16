@@ -43,19 +43,48 @@ echo "  Grafana: http://${VM_IP}:3000"
 [ "${1:-}" = "--check" ] && { echo; echo "Pre-flight OK."; exit 0; }
 
 before=$(wc -l < "$EVENTS" 2>/dev/null || echo 0)
+shown=$(wc -l < "$LOG" 2>/dev/null || echo 0)
+PATTERN="\| (UNUSUAL|WARNING|CRITICAL) \|"
+
+# Print log lines added since the last call that match PATTERN
+show_new_log_lines() {
+    local total
+    total=$(wc -l < "$LOG")
+    if [ "$total" -gt "$shown" ]; then
+        sed -n "$((shown + 1)),${total}p" "$LOG" | grep -E "$PATTERN" | sed 's/^/  /'
+        shown=$total
+    fi
+}
 
 # ---------------------------------------------------------------------
 step "2. Create the incident: $(nproc) busy loop(s) for ${DURATION}s"
-echo "  One loop per CPU, so the whole machine is at ~100%. They stop on their own."
+echo "  One loop per CPU, so the whole machine is at ~100%. Each loop stops itself."
+pids=()
 for _ in $(seq "$(nproc)"); do
-    timeout "${DURATION}s" python3 -c "while True: pass" &
+    # The loop ends itself after DURATION seconds (no 'timeout' needed).
+    python3 -c "import time
+end = time.time() + ${DURATION}
+while time.time() < end:
+    pass" < /dev/null > /dev/null 2>&1 &
+    pids+=("$!")
 done
+trap 'kill "${pids[@]}" 2>/dev/null' INT TERM
+
+sleep 2
+running=0
+for pid in "${pids[@]}"; do kill -0 "$pid" 2>/dev/null && running=$((running + 1)); done
+[ "$running" -gt 0 ] || fail "The load did not start. Check that python3 works: python3 --version"
+echo "  Load running: ${running} loop(s) busy."
 
 # ---------------------------------------------------------------------
 step "3. Watch ICLIM detect and rate it (live log)"
 echo "  UNUSUAL = unusual but short (<30 s) · CRITICAL = lasting ≥30 s and a value ≥90%"
-timeout "$((DURATION + 5))s" tail -n0 -F "$LOG" 2>/dev/null \
-    | grep --line-buffered -E "\| (UNUSUAL|WARNING|CRITICAL) \|"
+while kill -0 "${pids[0]}" 2>/dev/null; do
+    sleep 3
+    show_new_log_lines
+done
+sleep 7          # one more agent cycle after the load ends
+show_new_log_lines
 wait 2>/dev/null
 
 # ---------------------------------------------------------------------
