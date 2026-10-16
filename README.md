@@ -51,6 +51,33 @@ The AI worker then produced:
 
 The difference comes from measurement windows: a 1-second sample versus a 1-minute rate. The AI did not have that information, so it correctly did not guess.
 
+On the upgraded VM (2 vCPU), a 75-second load reaches CRITICAL; the AI then reported **CRITICAL / priority HIGH**, with ICLIM at 100% and Prometheus at ~97%.
+
+---
+
+## Screenshots
+
+**Grafana: Linux host metrics (Node Exporter)**
+![Linux system metrics](docs/images/grafana-linux-metrics.png)
+
+**Grafana: ICLIM agent health and anomaly counts**
+![ICLIM agent metrics](docs/images/grafana-agent-metrics.png)
+
+**Grafana: AI analysis state (from Prometheus)**
+![AI state panels](docs/images/grafana-ai-state.png)
+
+**Grafana: AI explanation and recommendations (from the AI Result API)**
+![AI tables](docs/images/grafana-ai-tables.png)
+
+**AI Result API: `curl localhost:8001/ai/latest`**
+![AI result JSON](docs/images/ai-result.png)
+
+**systemd timers: AI worker every 5 minutes, model refresh daily at 03:00**
+![systemd timers](docs/images/systemd-timers.png)
+
+**GitHub Actions: full Azure deploy → verify → destroy**
+![Pipeline C](docs/images/pipeline-full-validation.png)
+
 ---
 
 ## Tech stack

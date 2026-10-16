@@ -188,8 +188,11 @@ journalctl --list-boots
 ### A11. End-to-end check (also the demo)
 
 ```bash
-# 1. Generate 40 seconds of CPU load
-timeout 40s python3 -c "while True: pass" &
+# 1. Generate 75 seconds of CPU load (one loop per CPU: 2 loops on a 2-vCPU VM).
+#    75 s, not 40 s: under full load each agent cycle is slower, and CRITICAL
+#    needs 6 anomalous readings in a row (30 s of persistence).
+timeout 75s python3 -c "while True: pass" &
+timeout 75s python3 -c "while True: pass" &
 
 # 2. Watch severity escalate: UNUSUAL (<30s) → CRITICAL (≥30s with CPU ≥ 90%)
 journalctl -u iclim -f            # Ctrl+C when done

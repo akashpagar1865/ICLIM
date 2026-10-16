@@ -97,7 +97,7 @@ ls -l ~/projects/ICLIM/models/
 
 ## 3. AI worker: `iclim-ai-worker.service` + `.timer`
 
-**What it does:** takes the most recent anomaly event, builds an evidence package, and calls the LLM twice: once for the Incident Explainer ("what happened?") and once for the Operational Assistant ("what should I check next?"). It stores the combined result.
+**What it does:** finds the latest **incident** (anomaly events less than 60 s apart are grouped together) and picks its **most severe** event. If that is WARNING or CRITICAL, it builds an evidence package and calls the LLM twice: once for the Incident Explainer ("what happened?") and once for the Operational Assistant ("what should I check next?"). It stores the combined result. UNUSUAL-only incidents are skipped to save LLM quota.
 
 | | |
 |---|---|
@@ -107,7 +107,9 @@ ls -l ~/projects/ICLIM/models/
 | Provider | Groq, model `openai/gpt-oss-20b` by default (`GROQ_MODEL` overrides) |
 | Evidence | Prometheus `query_range` for CPU / memory / disk over the 5 minutes before the incident (60s step); `logs/iclim.log` lines in the same window, summarised |
 | Writes | `logs/ai_incidents.jsonl` (history), `logs/latest_ai.json` (latest) |
-| De-duplication | Skips the LLM call if the latest event's timestamp has already been processed |
+| Incident selection | Groups events < 60 s apart; explains the most severe one (ties → most recent) |
+| Severity filter | Only WARNING/CRITICAL are sent to the LLM (`AI_MIN_SEVERITY`, default `warning`) |
+| De-duplication | Skips the LLM call if the selected event has already been processed |
 
 **Check it / run it now**
 
