@@ -36,15 +36,15 @@ The script runs six steps by itself and prints a heading for each:
 | Step | What happens | Takes |
 |---|---|---|
 | 1 | Checks every service is running | 2 s |
-| 2 | Starts one busy loop per CPU for 75 s (stops on its own) | – |
-| 3 | Shows ICLIM's log live: UNUSUAL lines, then CRITICAL | ~80 s |
+| 2 | Starts one busy loop per CPU for 120 s at lowest priority, so ICLIM keeps running on time (stops on its own) | – |
+| 3 | Shows ICLIM's log live: UNUSUAL lines, then CRITICAL | ~2 min |
 | 4 | Summarises what ICLIM recorded (highest severity, duration, CPU) | 1 s |
 | 5 | Runs the AI worker immediately instead of waiting for the 5-min timer (asks for your sudo password) | ~10 s |
 | 6 | Prints the AI's answer: severity, priority, explanation, unknowns, suggested checks | 1 s |
 
 If it ends with *"Did not reach WARNING/CRITICAL"*, run a longer load:
 ```bash
-DEMO_SECONDS=90 bash scripts/run_demo.sh
+DEMO_SECONDS=180 bash scripts/run_demo.sh
 ```
 
 ---
@@ -58,7 +58,7 @@ DEMO_SECONDS=90 bash scripts/run_demo.sh
 > "The agent runs as a systemd service and checks the machine every ~6 seconds. An Isolation Forest model says normal or unusual. Separate rules decide severity. Prometheus scrapes the agent and Node Exporter; Grafana shows it. Every 5 minutes an AI worker picks up the latest serious incident, gathers evidence and asks the LLM for an explanation."
 
 **1:45–4:00 · Live incident** (start the script, switch between terminal and Grafana)
-> "I'm loading both CPUs to 100% for 75 seconds."
+> "I'm loading both CPUs to 100% for two minutes."
 > *(UNUSUAL lines appear)* "It's unusual but short, under 30 seconds, so it's UNUSUAL, not an alert."
 > *(CRITICAL appears)* "Now it has lasted 30 seconds and CPU is above 90%, so it's CRITICAL. Severity comes from duration plus impact, not from the model guessing."
 > *(Grafana)* "Top row: the host from Node Exporter. Middle row: ICLIM's own health and anomaly counts. Both agree."
@@ -82,7 +82,7 @@ DEMO_SECONDS=90 bash scripts/run_demo.sh
 | Problem | What to do and say |
 |---|---|
 | Pre-flight says a service is not active | `sudo systemctl start <name>`, rerun `--check`. If it won't start, use the backup video. |
-| Stays UNUSUAL, never CRITICAL | `DEMO_SECONDS=90 bash scripts/run_demo.sh`. Explain: "CRITICAL needs 30 s of persistence; under full load the agent's own cycle slows down." |
+| Stays UNUSUAL, never CRITICAL | `DEMO_SECONDS=180 bash scripts/run_demo.sh`. Explain: "CRITICAL needs 30 s of persistence. The load runs at low priority so the agent isn't starved; if it still falls behind, a longer load gives it time." |
 | AI step fails with **429 rate limit** | Show the last saved result: `curl -s localhost:8001/ai/latest \| python3 -m json.tool \| head -30`. Say: "This is the free-tier quota. It's actually why I added the severity filter." |
 | Grafana slow or blank | Use the terminal output and the API; show the README screenshots. |
 | VM won't boot / no network | Play the **backup recording** (below) and walk through the README. |

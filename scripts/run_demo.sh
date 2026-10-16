@@ -9,15 +9,17 @@
 # Run on the runtime VM, from the project folder:
 #   bash scripts/run_demo.sh            # full demo
 #   bash scripts/run_demo.sh --check    # pre-flight checks only
-#   DEMO_SECONDS=90 bash scripts/run_demo.sh   # longer load if CRITICAL isn't reached
+#   DEMO_SECONDS=180 bash scripts/run_demo.sh  # longer load if CRITICAL isn't reached
 #
-# Safe: the load stops by itself (timeout). Nothing is changed or installed.
+# Safe: the load stops by itself. Nothing is changed or installed.
+# The load runs at the lowest priority (nice 19), so the CPU still shows
+# ~100% but ICLIM is never starved and keeps checking every ~6 seconds.
 # =====================================================================
 
 set -u
 cd "$(dirname "$0")/.." || exit 1
 
-DURATION="${DEMO_SECONDS:-75}"
+DURATION="${DEMO_SECONDS:-120}"
 EVENTS="logs/anomaly_events.jsonl"
 LOG="logs/iclim.log"
 API="http://localhost:8001/ai/latest"
@@ -59,10 +61,11 @@ show_new_log_lines() {
 # ---------------------------------------------------------------------
 step "2. Create the incident: $(nproc) busy loop(s) for ${DURATION}s"
 echo "  One loop per CPU, so the whole machine is at ~100%. Each loop stops itself."
+echo "  The loops run at the lowest priority, so ICLIM still gets its turn."
 pids=()
 for _ in $(seq "$(nproc)"); do
     # The loop ends itself after DURATION seconds (no 'timeout' needed).
-    python3 -c "import time
+    nice -n 19 python3 -c "import time
 end = time.time() + ${DURATION}
 while time.time() < end:
     pass" < /dev/null > /dev/null 2>&1 &
@@ -102,7 +105,7 @@ sys.stderr.write("  Highest severity:   %s (lasted %s s, CPU %s%%)\n"
                  % (top["severity"].upper(), top["duration_seconds"], top["cpu"]))
 ')
 if [ "$top_severity" != "critical" ] && [ "$top_severity" != "warning" ]; then
-    fail "Did not reach WARNING/CRITICAL. Run again with a longer load: DEMO_SECONDS=90 bash scripts/run_demo.sh"
+    fail "Did not reach WARNING/CRITICAL. Run again with a longer load: DEMO_SECONDS=180 bash scripts/run_demo.sh"
 fi
 
 # ---------------------------------------------------------------------
