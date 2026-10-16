@@ -53,6 +53,8 @@ The difference comes from measurement windows: a 1-second sample versus a 1-minu
 
 On the upgraded VM (2 vCPU), a 75-second load reaches CRITICAL; the AI then reported **CRITICAL / priority HIGH**, with ICLIM at 100% and Prometheus at ~97%.
 
+Run it yourself on the runtime VM with `bash scripts/run_demo.sh` (see the [demo guide](docs/demo.md)).
+
 ---
 
 ## Screenshots
@@ -120,7 +122,7 @@ deploy/
 terraform/         Azure infrastructure (VM, network, NSG) + remote backend
 .github/workflows/ Pipeline A (CI), B (Terraform validation), C (deploy → verify → destroy)
 docs/              architecture, components, deployment, decisions, security
-scripts/           operational helpers (VM inventory)
+scripts/           operational helpers (VM inventory, live demo)
 archive/           earlier prototypes kept for history (log classifier, static dashboard)
 ```
 
@@ -152,6 +154,7 @@ On first run it collects 30 baseline samples, trains a model, and starts monitor
 | [Deployment](docs/deployment.md) | Step-by-step rebuild on CentOS/RHEL 9, and Azure pipeline setup |
 | [Engineering decisions](docs/decisions.md) | Why it is built this way, plus known limitations and next steps |
 | [Security](docs/security.md) | Controls in place and known gaps |
+| [Demo guide](docs/demo.md) | Run the live demo (`scripts/run_demo.sh`), talk track, backup plan |
 
 ---
 
